@@ -86,8 +86,5 @@
     "weight": 400,
     "source": "https://fonts.googleapis.com/css2",
     "format": "woff"
-  },
-  "banner": {
-    "dismissible": false
   }
 }
