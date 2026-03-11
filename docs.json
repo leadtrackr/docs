@@ -80,5 +80,14 @@
   },
   "footer": {
     "socials": {}
+  },
+  "fonts": {
+    "family": "Cairo",
+    "weight": 200,
+    "source": "https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap",
+    "format": "woff"
+  },
+  "banner": {
+    "dismissible": false
   }
 }
