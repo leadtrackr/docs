@@ -37,7 +37,9 @@
             "pages": [
               "integrations/ga4",
               "integrations/google-ads",
-              "integrations/meta"
+              "integrations/meta",
+              "integrations/linkedin-ads",
+              "integrations/microsoft-ads"
             ]
           },
           {
