@@ -85,26 +85,12 @@
   "footer": {
     "socials": {}
   },
-  "fonts": [
-    {
-      "family": "Cairo",
-      "weight": 400,
-      "source": "https://fonts.googleapis.com/css2",
-      "format": "woff"
-    },
-    {
-      "family": "Cairo",
-      "weight": 600,
-      "source": "https://fonts.googleapis.com/css2",
-      "format": "woff"
-    },
-    {
-      "family": "Cairo",
-      "weight": 700,
-      "source": "https://fonts.googleapis.com/css2",
-      "format": "woff"
-    }
-  ],
+  "fonts": {
+    "family": "Cairo",
+    "weight": 400,
+    "source": "https://fonts.googleapis.com/css2",
+    "format": "woff"
+  },
   "head": [
     "<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src='https://load.ywt.leadtrackr.io/alptjtdrv.js?'+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','2rk=HxZZMz45XVk4MTw5XEA7SgBPVlpbUhQCSx4BFQ4AAg0VGRZaAxs%3D');</script>"
   ]
