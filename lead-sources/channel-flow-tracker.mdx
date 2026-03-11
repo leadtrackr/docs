@@ -1,0 +1,68 @@
+---
+title: "How to Set Up the Channel Flow Tracker"
+sidebarTitle: "Channel Flow Tracker"
+description: "Track the full user journey and UTM parameters before a lead is submitted using the Channel Flow Tracker."
+---
+
+## Step 1: Add the LeadTrackr Tag to Your GTM Container
+
+1. Go to your **container** in Tag Manager
+2. Click **Templates** → **Search Gallery**
+3. Look for **LeadTrackr tag**
+4. Click **Add to Workspace**
+
+<Frame>
+  <img src="/images/lead-sources/gtm-1.png" alt="Search GTM gallery" />
+</Frame>
+
+## Step 2: Create a New LeadTrackr Tag
+
+1. Go to **Tags** and click **New**
+2. Select **LeadTrackr Tag** as the tag type
+3. Choose **Channel Flow Tracker** as the tag type
+
+<Frame>
+  <img src="/images/lead-sources/channel-flow-1.png" alt="Channel Flow Tracker tag type" />
+</Frame>
+
+## Step 3: Add a Trigger
+
+Attach an **All Pages** trigger to the LeadTrackr tag. This ensures the Channel Flow Tracker can capture UTM parameters and build the full user journey before a lead is submitted.
+
+<Warning>
+If you're using **Google Consent Mode**, keep the following in mind:
+
+- If your LeadTrackr tag is restricted to fire **only when analytics_storage is granted**, make sure the tag fires **after consent has been given**
+- This allows LeadTrackr to correctly store pageview data and attribution before the lead event occurs
+- If the tag fires before consent is granted, the channel flow may be incomplete or missing
+</Warning>
+
+<Frame>
+  <img src="/images/lead-sources/channel-flow-2.png" alt="All Pages trigger" />
+</Frame>
+
+## Step 4: Enable UTM Tracking in Your Ad Platforms
+
+To get accurate source/medium/channel data in LeadTrackr, make sure **UTM parameters** are added to your ads.
+
+The tag saves the following parameters:
+
+- `utm_source`
+- `utm_medium`
+- `utm_campaign`
+- `utm_content`
+- `utm_term`
+
+## Step 5: Publish Your Container
+
+Once your tag and trigger are configured, **publish your GTM container**.
+
+Your channel flow tracking has now been set up, and will be automatically included in new lead entries.
+
+## What's Next?
+
+Now that your **lead source + channel flow tracking** is active, it's time to send qualified leads to your ad platforms.
+
+<Card title="Set Up Google Ads Conversions" icon="google" href="/integrations/google-ads">
+  Send offline conversions to Google Ads
+</Card>

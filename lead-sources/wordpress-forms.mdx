@@ -1,0 +1,93 @@
+---
+title: "Connect WordPress Forms as a Lead Source"
+sidebarTitle: "WordPress Forms (Recommended)"
+description: "Learn how to set up a lead source using the LeadTrackr plugin for WordPress."
+---
+
+If you're **not using WordPress** or your form provider isn't supported, you can also set up a lead source using [Google Tag Manager (GTM)](/lead-sources/gtm).
+
+Currently supported WordPress form plugins:
+
+- GravityForms
+- ContactForm 7
+- Elementor
+- WPForms
+- Divi forms
+
+<Info>Is your form plugin not supported yet? Let us know at support@leadtrackr.io, we'd love to hear from you and may add it to our roadmap!</Info>
+
+## Step 1: Install the LeadTrackr Plugin
+
+1. In your WordPress dashboard, go to **Plugins**
+2. Click **Add New Plugin**
+3. Search for **LeadTrackr**
+4. Click **Install Now**
+5. Then click **Activate**
+
+<Frame>
+  <img src="/images/lead-sources/wordpress-1.png" alt="Install LeadTrackr plugin" />
+</Frame>
+
+Once activated, you'll see **LeadTrackr** appear in your admin menu.
+
+<Frame>
+  <img src="/images/lead-sources/wordpress-2.png" alt="LeadTrackr in admin menu" />
+</Frame>
+
+## Step 2: Connect Your Project
+
+To connect your WordPress site to your LeadTrackr account:
+
+1. Go to [app.leadtrackr.io/dashboard/projects](https://app.leadtrackr.io/dashboard/projects)
+2. Open the project you want to connect
+3. In the URL of the page, you'll find your **Project ID**
+
+<Frame>
+  <img src="/images/lead-sources/wordpress-3.png" alt="Find project ID in URL" />
+</Frame>
+
+**Example:** If the URL is `https://app.leadtrackr.io/projects/16`, your project ID is `16`.
+
+Enter this number in the **Project ID** field in the plugin settings and hit **Save**.
+
+<Frame>
+  <img src="/images/lead-sources/wordpress-4.png" alt="Enter project ID in plugin" />
+</Frame>
+
+## Step 3: Select Your Form Provider
+
+LeadTrackr automatically detects which supported form plugins are installed on your WordPress site.
+
+In the plugin settings:
+
+- Select your form provider (e.g. **Contact Form 7**, **Elementor**, etc.)
+- Navigate to the provider tab in the plugin
+
+## Step 4: Enable Tracking for Your Forms
+
+For each form you want to track:
+
+1. Give the form a **recognizable name**
+2. Enable tracking by checking the box
+3. Click **Save**
+
+Your forms are now connected and all new submissions will be sent to LeadTrackr for qualification and conversion tracking.
+
+<Frame>
+  <img src="/images/lead-sources/wordpress-5.png" alt="Enable form tracking" />
+</Frame>
+
+## What's Next?
+
+Nice work, your forms are now connected to LeadTrackr!
+
+Next, it's time to set up integrations like Google Ads or Meta to start sending offline conversions.
+
+<CardGroup cols={2}>
+  <Card title="Set Up Google Ads Conversions" icon="google" href="/integrations/google-ads">
+    Send offline conversions to Google Ads
+  </Card>
+  <Card title="Set Up Meta Integration" icon="meta" href="/integrations/meta">
+    Send offline conversions to Meta (Facebook)
+  </Card>
+</CardGroup>

@@ -1,0 +1,98 @@
+---
+title: "Structure Your Conversion Labels for Better Ad Performance"
+sidebarTitle: "Structure Your Labels"
+description: "Setting up clear and platform-aligned conversion labels helps you qualify leads consistently, send accurate offline conversions, and improve campaign optimization."
+---
+
+## Step 1: Create Internal Conversion Labels
+
+Start with your own lead process.
+
+Create labels in LeadTrackr that describe key actions after a lead is captured, moments like:
+
+- **Call Scheduled**
+- **Quote Sent**
+- **Deal Signed**
+- **Not Interested**
+- **Customer Onboarded**
+
+Use terminology your sales and marketing team will immediately recognize.
+
+### When to Use "Mark as Done"
+
+Each label also has a setting called **Mark as done**.
+
+<Warning>
+**Enable this only for the final step in your process**, like:
+- *Deal Signed*
+- *Customer Onboarded*
+- *Lead Lost*
+
+If you mark leads as "done" too early (e.g. after scheduling a call), you can't qualify them again later for a next step. So only use this for leads that reached their end state.
+</Warning>
+
+When this is enabled, leads will automatically move to the **Rated** tab after being processed. They won't return to the "Open" inbox again.
+
+## Step 2: Link Each Label to 1 Unique Event
+
+Once your labels are in place, map each of them to a **distinct** GA4 event or Google Ads conversion.
+
+### Google Analytics 4 (GA4)
+
+When integrating with GA4, we recommend using Google's *standard event names*. These unlock powerful built-in reports, especially useful for lead generation.
+
+| Event Name | Use When... |
+|---|---|
+| `generate_lead` | A lead submits a form online, or is added offline |
+| `qualify_lead` | You mark a lead as qualified |
+| `disqualify_lead` | You mark a lead as not relevant or not valuable |
+| `working_lead` | A rep contacts the lead or vice versa |
+| `close_convert_lead` | The lead becomes a paying customer |
+| `close_unconvert_lead` | The lead is lost or didn't become a customer |
+
+### Google Ads
+
+Create one conversion per LeadTrackr label, and assign each a **conversion category** that reflects the action type.
+
+| Example Label in LeadTrackr | Google Ads Conversion Name | Conversion Category |
+|---|---|---|
+| Call Scheduled | `Appointment Set` | Qualified Lead |
+| Quote Sent | `Quote Sent` | Qualified Lead |
+| Deal Signed | `Signed Contract` | Converted Lead |
+
+## Example Structures by Industry
+
+### B2B SaaS
+
+| LeadTrackr Label | Mark as done | GA4 Event | Google Ads Conversion |
+|---|---|---|---|
+| Demo Scheduled | No | `qualify_lead` | `Demo Call Booked` |
+| Quote Sent | No | `working_lead` | `Quote Sent` |
+| Trial Started | No | `close_convert_lead` | `Trial Started` |
+| Subscription Started | Yes | `close_unconvert_lead` | `Trial Not Converted` |
+
+### Automotive / Car Dealership
+
+| LeadTrackr Label | Mark as done | GA4 Event | Google Ads Conversion |
+|---|---|---|---|
+| Test Drive Booked | No | `qualify_lead` | `Test Drive` |
+| Offer Sent | No | `working_lead` | `Offer Shared` |
+| Vehicle Sold | Yes | `close_convert_lead` | `Vehicle Purchase` |
+| Lost Deal | Yes | `close_unconvert_lead` | `Lost Sale` |
+
+### Real Estate
+
+| LeadTrackr Label | Mark as done | GA4 Event | Google Ads Conversion |
+|---|---|---|---|
+| Viewing Scheduled | No | `qualify_lead` | `Property Viewing` |
+| Offer Placed | No | `working_lead` | `Offer Submitted` |
+| Contract Signed | Yes | `close_convert_lead` | `Contract Signed` |
+| Deal Lost | Yes | `close_unconvert_lead` | `Not Sold` |
+
+## Summary
+
+- Create labels based on your internal sales process
+- Map each label to **one unique GA4 event** and/or **one unique Google Ads conversion**
+- Stick to standard GA4 events where possible (`qualify_lead`, `close_convert_lead`, etc.)
+- Use conversion categories in Google Ads to improve optimization
+- Enable *Mark as done* only on the **final step** in your process

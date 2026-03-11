@@ -1,0 +1,72 @@
+---
+title: "Setting Up a Lead Source with GTM"
+sidebarTitle: "Google Tag Manager"
+description: "Set up a lead source using the LeadTrackr tag in Google Tag Manager."
+---
+
+## Step 1: Add the LeadTrackr Tag to Your GTM Container
+
+1. Go to your **container** in Tag Manager
+2. Click **Templates** → **Search Gallery**
+3. Look for **LeadTrackr tag**
+4. Click **Add to Workspace**
+
+<Frame>
+  <img src="/images/lead-sources/gtm-1.png" alt="Search GTM gallery for LeadTrackr" />
+</Frame>
+
+## Step 2: Create a New LeadTrackr Tag
+
+1. Go to **Tags** and click **New**
+2. Select **LeadTrackr Tag** as the tag type
+3. Choose **Lead** as the tag type
+4. Fill in the required fields:
+    - **Project ID**
+    - **Form name** (descriptive label)
+    - Any custom form fields or user data fields you want to pass along (e.g. email, phone, message)
+
+<Info>If you use server-side tagging, we recommend sending requests both client and server side and adding a unique ID for deduplication.</Info>
+
+<Frame>
+  <img src="/images/lead-sources/gtm-2.png" alt="LeadTrackr tag configuration" />
+</Frame>
+
+### Where to Find Your Project ID
+
+1. Go to [app.leadtrackr.io/dashboard/projects](https://app.leadtrackr.io/dashboard/projects)
+2. Open the project you want to connect
+3. Your **Project ID** is visible in the URL
+    - Example: `https://app.leadtrackr.io/projects/16` → project ID = `16`
+
+<Frame>
+  <img src="/images/lead-sources/wordpress-3.png" alt="Project ID in URL" />
+</Frame>
+
+## Step 3: Add a Trigger
+
+Attach a trigger that sends the lead event from the browser client to your server container.
+
+This is typically a **custom event**, such as `form_submission`, or an incoming HTTP request handled by your sGTM client.
+
+<Frame>
+  <img src="/images/lead-sources/gtm-3.png" alt="GTM trigger configuration" />
+</Frame>
+
+## Step 4: Publish Your Container
+
+Once your tag and trigger are configured, **publish your GTM container**.
+
+Your form submissions are now sent to LeadTrackr, ready to be rated, qualified, and pushed to ad platforms as offline conversions.
+
+## What's Next?
+
+With your lead source active, it's time to connect an integration like Google Ads or Meta.
+
+<CardGroup cols={2}>
+  <Card title="Set Up Google Ads Conversions" icon="google" href="/integrations/google-ads">
+    Send offline conversions to Google Ads
+  </Card>
+  <Card title="Set Up Meta Integration" icon="meta" href="/integrations/meta">
+    Send offline conversions to Meta (Facebook)
+  </Card>
+</CardGroup>
