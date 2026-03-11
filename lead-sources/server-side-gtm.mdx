@@ -62,15 +62,32 @@ Once your tag and trigger are configured, **publish your sGTM container**.
 
 Your form submissions are now sent to LeadTrackr via the Leads API, ready to be rated, qualified, and pushed to ad platforms as offline conversions.
 
-## What's Next?
-
-With your lead source active, it's time to connect an integration like Google Ads or Meta.
+## Other Lead Source Options
 
 <CardGroup cols={2}>
+  <Card title="WordPress Forms (Recommended)" icon="wordpress" href="/lead-sources/wordpress-forms">
+    Use the WordPress plugin for server-to-server tracking
+  </Card>
+  <Card title="Google Tag Manager" icon="code" href="/lead-sources/gtm">
+    Use the client-side GTM tag instead
+  </Card>
+</CardGroup>
+
+## What's Next?
+
+With your lead source active, set up the Channel Flow Tracker and connect your conversion destinations.
+
+<CardGroup cols={2}>
+  <Card title="Set Up Channel Flow Tracker" icon="route" href="/lead-sources/channel-flow-tracker">
+    Track the full user journey with UTM parameters
+  </Card>
   <Card title="Set Up Google Ads Conversions" icon="google" href="/integrations/google-ads">
     Send offline conversions to Google Ads
   </Card>
   <Card title="Set Up Meta Integration" icon="meta" href="/integrations/meta">
     Send offline conversions to Meta (Facebook)
+  </Card>
+  <Card title="Set Up GA4 Integration" icon="chart-line" href="/integrations/ga4">
+    Send offline conversions to Google Analytics 4
   </Card>
 </CardGroup>
