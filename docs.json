@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "LeadTrackr",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#51B483",
+    "light": "#FAFFFC",
+    "dark": "#3E8762"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -62,7 +62,8 @@
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/light.svg",
+    "href": "https://leadtrackr.io/"
   },
   "navbar": {
     "links": [
