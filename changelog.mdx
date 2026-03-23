@@ -3,6 +3,26 @@ title: "Changelog"
 description: "Product updates and announcements"
 ---
 
+<Update label="23-03-2026" description="v1.2.1">
+  - **Export**: Added Unique ID, First Channel, and Last Channel fields (source, medium, campaign, content, term) to the leads export
+  - **Export**: Added link to API documentation in the export modal for programmatic access
+  - **Lead Detail**: Expanded Channel Path section to display campaign, content, and term details per channel step
+</Update>
+
+<Update label="23-03-2026" description="v1.2.0">
+  - **API (Beta)**: Restructured `getLead` endpoint — all identifiers (`leadId`, `uniqueIdentifier`, `email`, `phone`)
+  - **API (Beta)**: Added `email` and `phone` exact-match filters to `getLeads`
+  - **API (Beta)**: Added `updateLeadStatus` endpoint to queue leads for conversion processing via the API
+  - **API (Beta)**: Leads looked up by `email`, `phone`, or `uniqueIdentifier` now return the most recently created match
+  - Added JavaScript and PHP code examples to all API reference pages
+</Update>
+
+<Update label="17-03-2026" description="v1.1.0">
+  - Launched the **Public API** with full documentation
+  - New endpoints: `getLead`, `getLeads`, and `updateLeadStatus`
+  - Added API Reference section to the docs
+</Update>
+
 <Update label="12-03-2026" description="v1.0.1">
   - Created new endpoint `/api/leads/createServerSideLead` for Server Sided Leads
   - Updated UI to make it easier to find/setup new lead sources

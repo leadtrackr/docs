@@ -1,0 +1,132 @@
+---
+title: "Get Lead"
+api: "GET /api/leads/getLead"
+description: "Retrieve a single lead by ID, email, phone, or unique identifier."
+---
+
+Returns the full details of a single lead. The lead must belong to the project associated with your API key.
+
+Provide exactly one identifier as a query parameter. If multiple are provided, the following priority order is used:
+
+1. `leadId`
+2. `uniqueIdentifier`
+3. `email`
+4. `phone`
+
+Only the highest-priority identifier is used — the others are ignored. For `email` and `phone` lookups, the most recently created lead is returned when multiple matches exist.
+
+## Query parameters
+
+<ParamField query="leadId" type="number">
+  The numeric ID of the lead to retrieve.
+</ParamField>
+
+<ParamField query="uniqueIdentifier" type="string">
+  Look up a lead by its user-provided unique identifier (e.g. your CRM lead ID).
+</ParamField>
+
+<ParamField query="email" type="string">
+  Look up a lead by email address. Returns the newest matching lead.
+</ParamField>
+
+<ParamField query="phone" type="string">
+  Look up a lead by phone number. Returns the newest matching lead.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string">
+  `"Lead retrieved"`.
+</ResponseField>
+
+<ResponseField name="lead" type="object">
+  The lead object.
+
+  <Expandable title="lead properties">
+    <ResponseField name="id" type="number">Lead ID</ResponseField>
+    <ResponseField name="status" type="string">Current lead status</ResponseField>
+    <ResponseField name="formName" type="string | null">Form name</ResponseField>
+    <ResponseField name="firstName" type="string | null">First name</ResponseField>
+    <ResponseField name="lastName" type="string | null">Last name</ResponseField>
+    <ResponseField name="phone" type="string | null">Phone number</ResponseField>
+    <ResponseField name="email" type="string | null">Email address</ResponseField>
+    <ResponseField name="companyName" type="string | null">Company name</ResponseField>
+    <ResponseField name="price" type="number | null">Lead value in cents</ResponseField>
+    <ResponseField name="note" type="string | null">Note attached to the lead</ResponseField>
+    <ResponseField name="formData" type="object | null">Raw form submission data</ResponseField>
+    <ResponseField name="userData" type="object | null">User contact data</ResponseField>
+    <ResponseField name="attributionData" type="object | null">Attribution and tracking data</ResponseField>
+    <ResponseField name="channelFlow" type="string | null">Channel flow value</ResponseField>
+    <ResponseField name="uniqueIdentifier" type="string | null">User-provided identifier linking the lead to an external system</ResponseField>
+    <ResponseField name="createdAt" type="string">ISO 8601 timestamp</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://app.leadtrackr.io/api/leads/getLead?leadId=42" \
+  -H "X-API-Key: your-api-key-here"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  "https://app.leadtrackr.io/api/leads/getLead?leadId=42",
+  { headers: { "X-API-Key": "your-api-key-here" } }
+);
+
+const data = await response.json();
+console.log(data.lead);
+```
+
+```php PHP
+$query = http_build_query(["leadId" => 42]);
+$ch = curl_init("https://app.leadtrackr.io/api/leads/getLead?" . $query);
+
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => ["X-API-Key: your-api-key-here"]
+]);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$data = json_decode($response, true);
+print_r($data["lead"]);
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "Lead retrieved",
+  "lead": {
+    "id": 42,
+    "status": "open",
+    "formName": "Contact Form",
+    "firstName": "John",
+    "lastName": "Doe",
+    "phone": "+31612345678",
+    "email": "john@example.com",
+    "companyName": "Acme Inc.",
+    "price": null,
+    "note": null,
+    "formData": {
+      "formName": "Contact Form",
+      "uniqueEventId": "evt_abc123"
+    },
+    "userData": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@example.com"
+    },
+    "attributionData": {
+      "gclid": "abc123",
+      "cid": "1234567890.1234567890"
+    },
+    "channelFlow": null,
+    "uniqueIdentifier": "crm-lead-456",
+    "createdAt": "2026-03-15T10:30:00.000Z"
+  }
+}
+```
+</ResponseExample>

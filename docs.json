@@ -9,6 +9,15 @@
     "dark": "#3E8762"
   },
   "favicon": "/favicon.ico",
+  "api": {
+    "mdx": {
+      "server": "https://app.leadtrackr.io",
+      "auth": {
+        "method": "key",
+        "name": "x-api-key"
+      }
+    }
+  },
   "navigation": {
     "tabs": [
       {
@@ -51,9 +60,41 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication"
+            ]
+          },
+          {
+            "group": "Leads",
+            "pages": [
+              "api-reference/leads/create-lead",
+              "api-reference/leads/create-server-side-lead",
+              "api-reference/leads/get-lead",
+              "api-reference/leads/get-leads",
+              "api-reference/leads/update-lead-status"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog and updates",
+            "pages": [
+              "changelog"
+            ]
+          }
+        ]
       }
     ],
-    "changelog": "changelog",
     "global": {
       "anchors": [
         {

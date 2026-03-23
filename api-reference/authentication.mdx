@@ -1,0 +1,42 @@
+---
+title: "Authentication"
+description: "How to authenticate with the LeadTrackr API"
+---
+
+Most API endpoints require authentication via an **API key** sent in the `X-API-Key` header.
+
+## Getting your API key
+
+1. Go to your [LeadTrackr Dashboard](https://app.leadtrackr.io)
+2. Open the project you want to connect
+3. Navigate to **Settings** and click **API Integration** in the sidebar
+4. Copy the **API Key**
+
+## Using your API key
+
+Include the API key in the `X-API-Key` header with every request:
+
+```bash
+curl -X GET https://app.leadtrackr.io/api/leads/getLeads \
+  -H "X-API-Key: your-api-key-here"
+```
+
+## Endpoints without authentication
+
+The [Create Lead](/api-reference/leads/create-lead) endpoint does **not** require an API key. It is designed for client-side use (e.g. from Google Tag Manager or browser scripts) and identifies the project via the `projectId` field in the request body.
+
+## Error responses
+
+If the API key is missing or invalid, you will receive a `401` response:
+
+```json
+{
+  "message": "Missing X-API-Key header"
+}
+```
+
+```json
+{
+  "message": "Invalid API key"
+}
+```

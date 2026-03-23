@@ -1,0 +1,190 @@
+---
+title: "Get Leads"
+api: "GET /api/leads/getLeads"
+description: "List and filter leads with pagination."
+---
+
+Returns a paginated list of leads for the project associated with your API key. Supports filtering, searching, and sorting.
+
+## Query parameters
+
+### Pagination
+
+<ParamField query="limit" type="number" default="50">
+  Number of leads per page. Min: `1`, max: `100`.
+</ParamField>
+
+<ParamField query="page" type="number" default="1">
+  Page number (1-indexed).
+</ParamField>
+
+### Filtering
+
+<ParamField query="status" type="string">
+  Filter by lead status. Supports comma-separated values for multiple statuses (e.g. `open,pending`).
+</ParamField>
+
+<ParamField query="formName" type="string">
+  Filter by form name.
+</ParamField>
+
+<ParamField query="uniqueIdentifier" type="string">
+  Filter by unique identifier (exact match). Returns leads that match the user-provided CRM or external system ID.
+</ParamField>
+
+<ParamField query="email" type="string">
+  Filter by email address (exact match).
+</ParamField>
+
+<ParamField query="phone" type="string">
+  Filter by phone number (exact match).
+</ParamField>
+
+<ParamField query="createdAt[gte]" type="string">
+  Only return leads created on or after this date (ISO 8601 format).
+</ParamField>
+
+<ParamField query="createdAt[lte]" type="string">
+  Only return leads created on or before this date (ISO 8601 format).
+</ParamField>
+
+### Search
+
+<ParamField query="search" type="string">
+  Search across first name, last name, email, phone, and company name. Minimum 2 characters.
+</ParamField>
+
+### Sorting
+
+<ParamField query="sort" type="string" default="createdAt:desc">
+  Sort field and direction, formatted as `field:direction`. Allowed fields: `createdAt`, `firstName`, `lastName`, `email`, `price`, `status`. Directions: `asc`, `desc`.
+</ParamField>
+
+### Attribution filters
+
+<ParamField query="gclid[exists]" type="boolean">
+  Filter leads that have (`true`) or don't have (`false`) a Google Click ID.
+</ParamField>
+
+<ParamField query="cid[exists]" type="boolean">
+  Filter leads that have (`true`) or don't have (`false`) a Client ID.
+</ParamField>
+
+<ParamField query="fbp[exists]" type="boolean">
+  Filter leads that have (`true`) or don't have (`false`) a Facebook Browser ID.
+</ParamField>
+
+<ParamField query="fbc[exists]" type="boolean">
+  Filter leads that have (`true`) or don't have (`false`) a Facebook Click ID.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string">
+  `"Leads retrieved"`.
+</ResponseField>
+
+<ResponseField name="leads" type="object[]">
+  Array of lead objects. See [Get Lead](/api-reference/leads/get-lead) for the full lead object shape.
+</ResponseField>
+
+<ResponseField name="total" type="number">
+  Total number of leads matching the filters.
+</ResponseField>
+
+<ResponseField name="page" type="number">
+  Current page number.
+</ResponseField>
+
+<ResponseField name="limit" type="number">
+  Number of leads per page.
+</ResponseField>
+
+<ResponseField name="totalPages" type="number">
+  Total number of pages.
+</ResponseField>
+
+<ResponseField name="hasMore" type="boolean">
+  Whether there are more pages after the current one.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://app.leadtrackr.io/api/leads/getLeads?limit=10&page=1&status=open&sort=createdAt:desc" \
+  -H "X-API-Key: your-api-key-here"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  limit: "10",
+  page: "1",
+  status: "open",
+  sort: "createdAt:desc"
+});
+
+const response = await fetch(
+  `https://app.leadtrackr.io/api/leads/getLeads?${params}`,
+  { headers: { "X-API-Key": "your-api-key-here" } }
+);
+
+const data = await response.json();
+console.log(data.leads);
+console.log(`Page ${data.page} of ${data.totalPages}`);
+```
+
+```php PHP
+$query = http_build_query([
+    "limit" => 10,
+    "page" => 1,
+    "status" => "open",
+    "sort" => "createdAt:desc"
+]);
+
+$ch = curl_init("https://app.leadtrackr.io/api/leads/getLeads?" . $query);
+
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => ["X-API-Key: your-api-key-here"]
+]);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$data = json_decode($response, true);
+print_r($data["leads"]);
+echo "Page " . $data["page"] . " of " . $data["totalPages"];
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "Leads retrieved",
+  "leads": [
+    {
+      "id": 42,
+      "status": "open",
+      "formName": "Contact Form",
+      "firstName": "John",
+      "lastName": "Doe",
+      "phone": "+31612345678",
+      "email": "john@example.com",
+      "companyName": "Acme Inc.",
+      "price": null,
+      "note": null,
+      "formData": null,
+      "userData": null,
+      "attributionData": null,
+      "channelFlow": null,
+      "uniqueIdentifier": "crm-lead-456",
+      "createdAt": "2026-03-15T10:30:00.000Z"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "limit": 10,
+  "totalPages": 1,
+  "hasMore": false
+}
+```
+</ResponseExample>

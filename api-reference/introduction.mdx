@@ -1,0 +1,75 @@
+---
+title: "Introduction"
+description: "Overview of the LeadTrackr API"
+---
+
+The LeadTrackr API lets you create leads, retrieve lead data, and update lead statuses programmatically.
+
+<Warning>
+The LeadTrackr API is currently in **beta**. While fully functional, endpoints and request/response formats may change as we refine the API. If you notice anything unexpected or have feedback, please reach out at [support@leadtrackr.io](mailto:support@leadtrackr.io).
+</Warning>
+
+## Base URL
+
+All API requests are made to:
+
+```
+https://app.leadtrackr.io
+```
+
+## Request format
+
+- All request bodies must be sent as **JSON** with `Content-Type: application/json`.
+- All responses return JSON.
+
+## Response format
+
+Every response includes a `message` field describing the result:
+
+```json
+{
+  "message": "Lead created successfully",
+  "leadId": 42,
+  "uniqueIdentifier": "crm-lead-456"
+}
+```
+
+## Error handling
+
+Errors return an appropriate HTTP status code with a `message` field:
+
+| Status | Meaning |
+|--------|---------|
+| `400`  | Bad request — missing or invalid parameters |
+| `401`  | Unauthorized — missing or invalid API key |
+| `403`  | Forbidden — project subscription is inactive |
+| `404`  | Not found — project or lead does not exist |
+| `405`  | Method not allowed |
+| `409`  | Conflict — duplicate operation |
+| `500`  | Internal server error |
+
+```json
+{
+  "message": "Missing required field: projectId"
+}
+```
+
+## Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create Lead" icon="plus" href="/api-reference/leads/create-lead">
+    Create a lead from client-side sources (GTM, browser)
+  </Card>
+  <Card title="Create Server-Side Lead" icon="server" href="/api-reference/leads/create-server-side-lead">
+    Create a lead from your backend using an API key
+  </Card>
+  <Card title="Get Lead" icon="magnifying-glass" href="/api-reference/leads/get-lead">
+    Retrieve a single lead by ID, email, phone, or unique identifier
+  </Card>
+  <Card title="Get Leads" icon="list" href="/api-reference/leads/get-leads">
+    List and filter leads with pagination
+  </Card>
+  <Card title="Update Lead Status" icon="arrows-rotate" href="/api-reference/leads/update-lead-status">
+    Queue a lead for conversion processing
+  </Card>
+</CardGroup>
