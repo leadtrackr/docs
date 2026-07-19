@@ -11,7 +11,7 @@ The LeadTrackr LeadBot is a lightweight contact widget that sits in the bottom c
 - **No styling conflicts** — renders inside a Shadow DOM, so your site's CSS and the LeadBot never interfere
 - **Compatible with the LeadTrackr tag** — shares the same `lt_channelflow` cookie and lead format, so the LeadBot and the [GTM tag](/lead-sources/gtm) can run side by side
 - **Multilingual** — follows your page's `lang` attribute (`nl`/`en`, falls back to English)
-- **Fully themeable** — every color can match your brand through configuration
+- **Fully themeable** — every color can match your brand, and the LeadBot inherits your website's font by default (no external font requests)
 
 ## Step 1: Find your project ID
 
@@ -77,6 +77,7 @@ All options go in `window.ltLeadBotConfig`:
 | `defaultCountry` | `"NL"` | Preselected country in the WhatsApp phone step |
 | `language` | auto | Force `"nl"` or `"en"`; default follows the page's `lang` attribute |
 | `responseTimeText` | per language | For example `"Average response time: within 15 minutes"` |
+| `theme.font` | `"inherit"` | Inherits your website's font by default; set a CSS font stack to override |
 | `callTracking` | `false` | Read the phone number from the LeadTrackr call tracking cookie ([see below](#call-tracking-integration)) |
 | `theme` | LeadTrackr colors | Override any color, see below |
 | `texts` | per language | Override any UI string per key |
@@ -89,6 +90,7 @@ Match the LeadBot to any brand by overriding colors:
 
 ```js
 theme: {
+  font: "inherit",          // inherits your site's font; or e.g. "Cairo, sans-serif"
   primary: "#52B483",        // buttons, accents, pulse animation
   primaryHover: "#3E8762",
   primaryTint: "#EDF8F2",    // icon tiles and hover states
