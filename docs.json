@@ -39,6 +39,7 @@
               "lead-sources/wordpress-forms",
               "lead-sources/gtm",
               "lead-sources/server-side-gtm",
+              "lead-sources/leadbot",
               "lead-sources/channel-flow-tracker"
             ]
           },

@@ -1,0 +1,202 @@
+---
+title: "Setting up the LeadTrackr LeadBot"
+sidebarTitle: "LeadBot"
+description: "Add the LeadBot to any website and turn visitors into tracked leads via contact form, phone, or WhatsApp."
+icon: "robot"
+---
+
+The LeadTrackr LeadBot is a lightweight contact widget that sits in the bottom corner of your website. Visitors can send a message, call you directly, or start a WhatsApp conversation — and every lead lands in your LeadTrackr project with full attribution (channel flow, `gclid`, `wbraid`, `fbc`, `fbp`, and GA4 client ID).
+
+- **One script tag** — a single self-contained file (±13 KB gzip), no dependencies
+- **No styling conflicts** — renders inside a Shadow DOM, so your site's CSS and the LeadBot never interfere
+- **Compatible with the LeadTrackr tag** — shares the same `lt_channelflow` cookie and lead format, so the LeadBot and the [GTM tag](/lead-sources/gtm) can run side by side
+- **Multilingual** — follows your page's `lang` attribute (`nl`/`en`, falls back to English)
+- **Fully themeable** — every color can match your brand through configuration
+
+## Step 1: Find your project ID
+
+1. Go to [app.leadtrackr.io/dashboard/projects](https://app.leadtrackr.io/dashboard/projects)
+2. Open the project you want to connect
+3. Your **project ID** is visible in the URL
+    - Example: `https://app.leadtrackr.io/projects/16` → project ID = `16`
+
+## Step 2: Add the LeadBot to your website
+
+### Option A: Google Tag Manager (recommended)
+
+1. Go to **Tags** and click **New**
+2. Select **Custom HTML** as the tag type
+3. Paste the snippet below and fill in your details
+4. Set the trigger to **All Pages**
+5. Preview, then **publish your container**
+
+```html
+<script>
+window.ltLeadBotConfig = {
+  projectId: "YOUR_PROJECT_ID",
+  companyName: "Example Inc.",
+  agentName: "Nick",
+  agentPhoto: "https://example.com/team/nick.jpg",
+  phone: "+31 20 123 4567",
+  whatsapp: "+31612345678"
+};
+</script>
+<script src="https://cdn.jsdelivr.net/gh/leadtrackr/leadtrackr-leadbot@1/dist/lt-leadbot.min.js" async></script>
+```
+
+<Info>Keep the configuration block above the script tag — the LeadBot reads it once on load.</Info>
+
+### Option B: Directly in your site
+
+Paste the same snippet just before the closing `</body>` tag of your site template. This works on any platform (WordPress, Webflow, Shopify, custom builds).
+
+## Step 3: Test your setup
+
+1. Open your website — the launcher with your agent photo appears in the bottom-right corner
+2. Send a test message through the **contact form** and the **WhatsApp** flow
+3. Check your LeadTrackr project: both test leads appear with their attribution data
+4. Optional: open GTM preview mode and confirm the `leadtrackr_leadbot_*` events fire in the dataLayer
+
+## Configuration reference
+
+All options go in `window.ltLeadBotConfig`:
+
+| Option | Default | Description |
+|---|---|---|
+| `projectId` | — | **Required.** Your LeadTrackr project ID |
+| `companyName` | `""` | Company name shown in the header and teaser |
+| `agentName` | `""` | Name of the team member shown in the LeadBot |
+| `agentPhoto` | `""` | URL of a profile photo (launcher and panel); empty shows an initial |
+| `greeting` | per language | Greeting in the teaser, panel, and WhatsApp chat |
+| `phone` | `null` | Phone number for the call channel; `null` hides the channel |
+| `whatsapp` | `null` | WhatsApp number (wa.me target); `null` hides the channel |
+| `channels` | `["contact_form","phone","whatsapp"]` | Order equals display order; a subset is allowed |
+| `position` | `"right"` | `"right"` or `"left"` |
+| `offset` | `{ bottom: 20, side: 20 }` | Distance from the corner in pixels |
+| `teaser` | `true` | Teaser bubble; a dismissal is remembered per session |
+| `defaultCountry` | `"NL"` | Preselected country in the WhatsApp phone step |
+| `language` | auto | Force `"nl"` or `"en"`; default follows the page's `lang` attribute |
+| `responseTimeText` | per language | For example `"Average response time: within 15 minutes"` |
+| `callTracking` | `false` | Read the phone number from the LeadTrackr call tracking cookie ([see below](#call-tracking-integration)) |
+| `theme` | LeadTrackr colors | Override any color, see below |
+| `texts` | per language | Override any UI string per key |
+
+<Tip>When `agentName` is set, the LeadBot speaks in first person ("How can I help you?"). Without an agent it uses "we" instead.</Tip>
+
+### Theme
+
+Match the LeadBot to any brand by overriding colors:
+
+```js
+theme: {
+  primary: "#52B483",        // buttons, accents, pulse animation
+  primaryHover: "#3E8762",
+  primaryTint: "#EDF8F2",    // icon tiles and hover states
+  launcherBorder: "#52B483",
+  headerBg: "#FFFFFF",
+  headerText: "#020A24",
+  panelBg: "#FFFFFF",
+  text: "#1F2937",
+  textMuted: "#6B7280",
+  border: "#E5E7EB",
+  error: "#FF6A6A",
+  radius: 16
+}
+```
+
+The WhatsApp chat view deliberately keeps its authentic WhatsApp look regardless of your theme.
+
+### Language
+
+The LeadBot reads the `lang` attribute of your page (`<html lang="nl">` shows Dutch, `<html lang="en">` shows English) and falls back to English for missing or unsupported languages. Every visible string can be overridden through the `texts` object.
+
+## Call tracking integration
+
+If you use LeadTrackr call tracking (dynamic number insertion), the regular swap script cannot reach inside the LeadBot's Shadow DOM. Set `callTracking: true` and the LeadBot reads the dynamic number from the call tracking cookie itself, for both the displayed number and the `tel:` link:
+
+```js
+window.ltLeadBotConfig = {
+  projectId: "YOUR_PROJECT_ID",
+  phone: "+31 20 123 4567",   // fallback when no tracking cookie is present
+  callTracking: true
+};
+```
+
+- The number is read on every render, so it also works when the cookie is set after page load
+- Without a valid cookie the LeadBot falls back to the configured `phone`; without either, the call channel is hidden
+- Multiple swap groups: `callTracking: { swapGroup: 1 }`
+
+<Info>With `callTracking: true`, a click on the call channel does **not** push a conversion event — call tracking measures the actual call, so a click conversion would double count.</Info>
+
+## dataLayer events
+
+The LeadBot pushes three events, always flat — only `event`, `channel`, and `user_data`:
+
+```js
+// LeadBot opened
+window.dataLayer.push({ event: "leadtrackr_leadbot_open" });
+
+// Channel selected (contact_form | phone | whatsapp)
+window.dataLayer.push({ event: "leadtrackr_leadbot_channel_click", channel: "whatsapp" });
+
+// Conversion — user_data depends on the channel
+window.dataLayer.push({
+  event: "leadtrackr_leadbot_conversion",
+  channel: "contact_form",
+  user_data: {
+    email_address: "example@email.com",
+    first_name: "Jane",
+    last_name: "Doe"
+  }
+});
+```
+
+Use `leadtrackr_leadbot_conversion` as the trigger for your GA4, Google Ads, or Meta tags. The `user_data` object is ready for enhanced conversions and advanced matching.
+
+<Warning>Do **not** trigger a LeadTrackr lead tag on `leadtrackr_leadbot_conversion` events. The LeadBot already delivers every lead to your project — an extra tag would create duplicates.</Warning>
+
+## How the WhatsApp flow works
+
+1. The visitor types a message in a WhatsApp-style chat
+2. The visitor enters the phone number they want to start the conversation with (full international country list)
+3. The lead is stored in your LeadTrackr project **first**
+4. WhatsApp opens in a new tab with the message prefilled — the visitor sends it there to start the conversation
+
+You capture the lead and its attribution even if the visitor never sends the WhatsApp message.
+
+## Versions
+
+The snippet above uses `@1`, which automatically serves the latest release. Updates propagate through the CDN within about 12 hours; returning visitors may hold a cached version for up to 7 days. If you prefer exact control, pin a specific version and update it manually:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/leadtrackr/leadtrackr-leadbot@1.2.0/dist/lt-leadbot.min.js" async></script>
+```
+
+Releases and source code live at [github.com/leadtrackr/leadtrackr-leadbot](https://github.com/leadtrackr/leadtrackr-leadbot).
+
+## Troubleshooting
+
+**The LeadBot does not appear.** Check the browser console: `[LeadTrackr LeadBot] data-project-id ontbreekt` means no `projectId` was found. Make sure it is set in `ltLeadBotConfig` and the config block sits above the script tag.
+
+**A channel is missing.** The call channel only shows with a `phone` number (or `callTracking` enabled), and the WhatsApp channel only with a `whatsapp` number.
+
+**You seem to load an old version.** Open DevTools → Network, click `lt-leadbot.min.js`, and check the `x-jsd-version` response header. Hard refresh (Cmd/Ctrl+Shift+R) to bypass browser cache, or pin the latest version in the URL.
+
+**Call tracking number is not swapped.** Run this in the console on your site:
+
+```js
+document.cookie.split('; ').filter(c => c.startsWith('yeswetrack_'))
+```
+
+An empty result means call tracking is not active on that page. Also confirm `callTracking: true` is set in your configuration.
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Set up Channel Flow Tracker" icon="route" href="/lead-sources/channel-flow-tracker">
+    Track the full user journey with UTM parameters
+  </Card>
+  <Card title="Connect conversion destinations" icon="bullseye" href="/integrations/google-ads">
+    Push qualified leads to Google Ads, GA4, and Meta
+  </Card>
+</CardGroup>
