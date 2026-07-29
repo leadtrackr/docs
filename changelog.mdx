@@ -3,6 +3,12 @@ title: "Changelog"
 description: "Product updates and announcements"
 ---
 
+<Update label="29-07-2026" description="v1.3.1">
+  - **Conversion Labels**: Added conversion paths — give a label an ordered set of prerequisite steps, and leads are automatically taken through each step (every step sending its own conversions) before the final label is applied
+  - **Conversion Labels**: New "convert once" option — when enabled, a conversion is sent to the ad platforms at most once per lead; re-applying the label later only updates the lead's status without re-sending
+  - **Pipedrive**: The integration now supports lead events next to deal events — choose deals, leads, or both per connection, and the webhooks in Pipedrive are updated immediately when you change it
+</Update>
+
 <Update label="22-07-2026" description="v1.3.0">
   - **Integrations**: Launched a full-fledged integrations setup — connect external tools to LeadTrackr and automatically process lead conversions from incoming events
     - **Custom Webhooks** — receive events from any system and turn them into conversions using flexible mapping rules
