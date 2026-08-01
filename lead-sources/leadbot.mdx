@@ -71,10 +71,12 @@ All options go in `window.ltLeadBotConfig`:
 | `phone` | `null` | Phone number for the call channel; `null` hides the channel |
 | `whatsapp` | `null` | WhatsApp number (wa.me target); `null` hides the channel |
 | `channels` | `["contact_form","phone","whatsapp"]` | Order equals display order; a subset is allowed |
+| `launcher` | `true` | `false` hides the LeadBot launcher entirely, e.g. to run [interceptor-only](#whatsapp-interceptor) |
+| `whatsappInterceptor` | `false` | `true` intercepts clicks on your site's existing WhatsApp links and opens the LeadBot flow instead ([see below](#whatsapp-interceptor)) |
 | `position` | `"right"` | `"right"` or `"left"` |
 | `offset` | `{ bottom: 20, side: 20 }` | Distance from the corner in pixels |
 | `teaser` | `true` | Teaser bubble; a dismissal is remembered per session |
-| `defaultCountry` | `"NL"` | Preselected country in the WhatsApp phone step |
+| `defaultCountry` | auto | Preselected country in the WhatsApp phone step; defaults to the visitor's browser locale (`nl-BE` → Belgium), falling back to `NL`. No IP geolocation is used |
 | `language` | auto | Force `"nl"` or `"en"`; default follows the page's `lang` attribute |
 | `responseTimeText` | per language | For example `"Average response time: within 15 minutes"` |
 | `callTracking` | `false` | Read the phone number from the LeadTrackr call tracking cookie ([see below](#call-tracking-integration)) |
@@ -164,13 +166,50 @@ Use `leadtrackr_leadbot_conversion` as the trigger for your GA4, Google Ads, or 
 
 You capture the lead and its attribution even if the visitor never sends the WhatsApp message.
 
+The message field is multi-line and grows with the content. On desktop, Enter sends and Shift+Enter adds a line break; on mobile the return key adds a line break and the send button sends — the same behavior as WhatsApp itself.
+
+## WhatsApp Interceptor
+
+Most websites already have WhatsApp links — a "Chat with us" button, a link in the footer or on the contact page. Clicking one normally opens WhatsApp directly, and the lead is invisible to your tracking. With the WhatsApp Interceptor the LeadBot captures those clicks:
+
+```js
+window.ltLeadBotConfig = {
+  projectId: "YOUR_PROJECT_ID",
+  whatsappInterceptor: true,
+  agentName: "Jane",
+  agentPhoto: "https://example.com/jane.jpg"
+};
+```
+
+When a visitor clicks a WhatsApp link, the LeadBot opens a modal (centered on desktop, bottom sheet on mobile) with the same WhatsApp chat flow: message → phone number → lead stored in LeadTrackr → WhatsApp opens with the message prefilled.
+
+**How links are handled:**
+
+- Recognized formats: `wa.me/<number>`, `api.whatsapp.com/send`, `web.whatsapp.com/send`, and `whatsapp://send`
+- The destination number comes from the clicked link, so different links (sales, support) keep their own numbers; a `?text=` parameter prefills the message field
+- Links without a number fall back to the configured `whatsapp` number; if neither exists, the link works as before
+- Group invites (`chat.whatsapp.com`) and shortcode links (`wa.me/message/…`) are never intercepted
+- Works for links added after page load, too
+
+**Combinations:**
+
+| Setup | Config |
+|---|---|
+| LeadBot only (default) | — |
+| LeadBot + interceptor | `whatsappInterceptor: true` |
+| Interceptor only, no launcher | `whatsappInterceptor: true, launcher: false` |
+
+Interceptor leads arrive with the form name `LeadBot — WhatsApp Interceptor`, so you can tell them apart from leads that came through the LeadBot panel. The dataLayer events use `channel: "whatsapp"`, identical to the regular WhatsApp channel.
+
 ## Versions
 
-The snippet above uses `@1`, which automatically serves the latest release. Updates propagate through the CDN within about 12 hours; returning visitors may hold a cached version for up to 7 days. If you prefer exact control, pin a specific version and update it manually:
+The snippet above uses `@1`, which automatically serves the latest 1.x release. Updates propagate through the CDN within about 12 hours; returning visitors may hold a cached version for up to 7 days. If you prefer exact control, pin a specific version and update it manually — a pinned URL is a new URL, so it takes effect immediately for every visitor:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/leadtrackr/leadtrackr-leadbot@1.2.0/dist/lt-leadbot.min.js" async></script>
+<script src="https://cdn.jsdelivr.net/gh/leadtrackr/leadtrackr-leadbot@1.5.0/dist/lt-leadbot.min.js" async></script>
 ```
+
+To check which version a page is running, look at the first line of the loaded bundle (`/*! LeadTrackr LeadBot v1.5.0 … */`) or the `x-jsd-version` response header.
 
 Releases and source code live at [github.com/leadtrackr/leadtrackr-leadbot](https://github.com/leadtrackr/leadtrackr-leadbot).
 
