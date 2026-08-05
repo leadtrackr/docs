@@ -9,6 +9,18 @@
     "dark": "#3E8762"
   },
   "favicon": "/favicon.ico",
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "mcp",
+      "add-mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
   "api": {
     "mdx": {
       "server": "https://app.leadtrackr.io",
