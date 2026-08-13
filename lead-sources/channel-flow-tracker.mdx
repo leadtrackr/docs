@@ -26,6 +26,14 @@ icon: "route"
   <img src="/images/lead-sources/channel-flow-1.png" alt="Channel Flow Tracker tag type" />
 </Frame>
 
+### Optional settings
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| **Session Timeout (minutes)** | 30 | How long a visitor can go without a pageview before their next visit counts as a new session. Matches the GA4 default. |
+| **Use Custom UTM Parameters** | off | Use your own parameter names instead of `utm_source`, `utm_medium` and the rest. |
+| **Enable debug mode** | off | Logs the resolved channel and session state to the browser console in GTM preview mode. |
+
 ## Step 3: Add a Trigger
 
 Attach an **All Pages** trigger to the LeadTrackr tag. This ensures the Channel Flow Tracker can capture UTM parameters and build the full user journey before a lead is submitted.
@@ -54,11 +62,87 @@ The tag saves the following parameters:
 - `utm_content`
 - `utm_term`
 
+<Tip>
+No UTM parameters on your Google Ads campaigns? The tag falls back to the click ID that auto-tagging adds to the URL (`gclid`, `gbraid` or `wbraid`), and records the visit as `google / cpc`. Microsoft Ads works the same way through `msclkid`. UTM parameters still give you far more detail, since the fallback cannot tell you which campaign the click came from.
+</Tip>
+
 ## Step 5: Publish Your Container
 
 Once your tag and trigger are configured, **publish your GTM container**.
 
 Your channel flow tracking has now been set up, and will be automatically included in new lead entries.
+
+## How ChannelFlow Records Sessions
+
+Every entry in a channel path represents **one session**, not one pageview. Browsing five pages in a row produces a single entry, so the path stays readable no matter how much someone clicks around.
+
+A new session starts when either of these happens:
+
+- **The visitor has been inactive.** No pageview for longer than the session timeout, 30 minutes by default. Coming back the next day therefore starts a new session, even if they arrive through the same channel as before.
+- **A new campaign brings them in.** UTM parameters or an ad click ID that resolve to a different channel than the last entry. Reloading the same landing page does not add an entry, because the channel has not changed.
+
+A journey then reads like this:
+
+| # | Channel | When | Landing page |
+| --- | --- | --- | --- |
+| 1 | google / cpc | 21 July, 08:33 | /conversion-tracking |
+| 2 | direct / none | 26 July, 19:02 | /pricing |
+| 3 | nieuwsbrief / email | 5 August, 09:15 | /demo |
+
+### How the channel is determined
+
+The first rule that matches wins:
+
+| Rule | Result |
+| --- | --- |
+| UTM parameters in the URL | The UTM values themselves |
+| `gclid`, `gbraid` or `wbraid` in the URL | `google / cpc` |
+| `msclkid` in the URL | `bing / cpc` |
+| The visitor came from a search engine | For example `google / organic` |
+| The visitor came from another website | For example `www.example.com / referral` |
+| Anything else | `direct / none` |
+
+<Info>
+Two details worth knowing when a result surprises you.
+
+An ad click ID only counts when it is in the URL of that visit and the visitor did not arrive from your own site. Google Consent Mode can append the click ID to internal links when a visitor declines consent, and those are carried over rather than new clicks.
+
+A visitor who returns after the session timeout through a link on your own site is recorded as `direct / none`, because there is no external source to attribute the visit to. Google Analytics 4 treats this the same way.
+</Info>
+
+## Cookies Used by ChannelFlow
+
+ChannelFlow uses two first-party cookies to build and maintain the visitor's channel journey.
+
+### lt_channelflow
+
+The `lt_channelflow` cookie stores the visitor's marketing channel path. It contains attribution data such as the source, medium, campaign and landing page for each recorded session. The cookie does not contain personal information or a unique visitor identifier and is used solely for first-party analytical attribution.
+
+### lt_session
+
+The `lt_session` cookie is a lightweight session cookie used to determine whether a visitor is still within the same browsing session. By default, it expires after 30 minutes of inactivity. It does not store any visitor information and simply indicates whether a new ChannelFlow session should be started.
+
+Together, these cookies allow ChannelFlow to accurately reconstruct a visitor's marketing journey without relying on persistent user identifiers or cross-site tracking.
+
+## Privacy by Design
+
+ChannelFlow was designed according to privacy-by-design principles. Instead of generating or storing a unique visitor identifier, it stores only the visitor's marketing channel path in a first-party cookie. In other words, ChannelFlow stores the marketing journey, not the identity of the visitor.
+
+The cookie itself does not contain personal information or a unique identifier. It stores only attribution data, such as the marketing source, medium, campaign and landing page of each session. It is not used for advertising, profiling, remarketing or cross-site tracking.
+
+The cookie is only read when a visitor submits a form or otherwise becomes a converted lead. At that point, the stored channel path is attached to the lead in LeadTrackr for first-party attribution reporting.
+
+When determining how to classify the ChannelFlow cookie, you may want to consider the following:
+
+- No unique visitor identifier is generated or stored.
+- The cookie is first-party and remains on your own domain.
+- It stores only marketing attribution data for analytical purposes.
+- It is not used for advertising, profiling or cross-site tracking.
+- The cookie is only read when a lead is created and the attribution data is attached to that lead.
+
+<Note>
+Whether the ChannelFlow cookie should be classified as a functional or analytical cookie depends on your own legal assessment, local regulations and the way it is implemented within your organisation.
+</Note>
 
 ## What's Next?
 
