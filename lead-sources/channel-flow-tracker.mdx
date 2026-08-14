@@ -5,7 +5,31 @@ description: "Track the full user journey and UTM parameters before a lead is su
 icon: "route"
 ---
 
-## Step 1: Add the LeadTrackr Tag to Your GTM Container
+The Channel Flow Tracker records which marketing channels brought a visitor to your site, long before they fill in a form. When a lead comes in, that journey is attached to it, so you can see that the "direct" conversion actually started with a Google Ads click three weeks earlier.
+
+## Two Ways to Set This Up
+
+Channel Flow runs either as a tag in Google Tag Manager or straight from the LeadTrackr WordPress plugin. Both routes write the same two cookies in the same format and follow the same logic, so the attribution you end up with is identical. Pick one:
+
+- **Your site already uses GTM** — use the tag. It also covers pages that are not WordPress (a campaign landing page on another platform, a booking subdomain), and it is the only route with a configurable session timeout.
+- **There is no GTM on the site** — use the plugin. One switch in wp-admin, no container to publish and no second tool to keep in sync.
+
+<CardGroup cols={2}>
+  <Card title="Google Tag Manager" icon="tag" href="#set-up-with-google-tag-manager">
+    Add the Channel Flow Tracker tag to your container
+  </Card>
+  <Card title="WordPress Plugin" icon="wordpress" href="#set-up-with-the-wordpress-plugin">
+    Turn Channel Flow on in the LeadTrackr plugin settings
+  </Card>
+</CardGroup>
+
+<Note>
+There is no reason to run both. A site that happens to have both active stays consistent, since the two implementations write identical cookies — but you gain nothing and you get two places to check whenever attribution looks wrong.
+</Note>
+
+## Set Up with Google Tag Manager
+
+### Step 1: Add the LeadTrackr Tag to Your GTM Container
 
 1. Go to your **container** in Tag Manager
 2. Click **Templates** → **Search Gallery**
@@ -16,7 +40,7 @@ icon: "route"
   <img src="/images/lead-sources/gtm-1.png" alt="Search GTM gallery" />
 </Frame>
 
-## Step 2: Create a New LeadTrackr Tag
+### Step 2: Create a New LeadTrackr Tag
 
 1. Go to **Tags** and click **New**
 2. Select **LeadTrackr Tag** as the tag type
@@ -26,7 +50,7 @@ icon: "route"
   <img src="/images/lead-sources/channel-flow-1.png" alt="Channel Flow Tracker tag type" />
 </Frame>
 
-### Optional settings
+#### Optional settings
 
 | Setting | Default | What it does |
 | --- | --- | --- |
@@ -34,7 +58,7 @@ icon: "route"
 | **Use Custom UTM Parameters** | off | Use your own parameter names instead of `utm_source`, `utm_medium` and the rest. |
 | **Enable debug mode** | off | Logs the resolved channel and session state to the browser console in GTM preview mode. |
 
-## Step 3: Add a Trigger
+### Step 3: Add a Trigger
 
 Attach an **All Pages** trigger to the LeadTrackr tag. This ensures the Channel Flow Tracker can capture UTM parameters and build the full user journey before a lead is submitted.
 
@@ -50,11 +74,46 @@ If you're using **Google Consent Mode**, keep the following in mind:
   <img src="/images/lead-sources/channel-flow-2.png" alt="All Pages trigger" />
 </Frame>
 
-## Step 4: Enable UTM Tracking in Your Ad Platforms
+### Step 4: Publish Your Container
 
-To get accurate source/medium/channel data in LeadTrackr, make sure **UTM parameters** are added to your ads.
+Once your tag and trigger are configured, **publish your GTM container**.
 
-The tag saves the following parameters:
+Your channel flow tracking is now active and will be included automatically in new lead entries.
+
+## Set Up with the WordPress Plugin
+
+The LeadTrackr plugin ships Channel Flow itself. It does not need the GTM tag, and it does not load anything from a CDN — the script is served as a first-party file from your own site, so there is no extra domain to allow in a consent banner or a content security policy.
+
+### Step 1: Install and Connect the Plugin
+
+Channel Flow lives inside the plugin you already use for your forms, so there is nothing extra to install. If LeadTrackr is not on the site yet, work through [Connect WordPress Forms as a Lead Source](/lead-sources/wordpress-forms) first: the plugin has to be activated and connected to your project ID before Channel Flow has anywhere to send its data.
+
+### Step 2: Switch Channel Flow On
+
+1. In your WordPress dashboard, go to **LeadTrackr** → **General**
+2. Open the **Channel Flow** section
+3. Turn on **Enable Channel Flow tracking**
+4. Click **Save**
+
+That is the whole setup. From the next pageview onward, the plugin builds the channel path and attaches it to every form submission it sends to LeadTrackr.
+
+<Warning>
+**New installs have Channel Flow on, sites that upgraded do not.** A plugin update never changes how an existing site behaves, so if LeadTrackr was already running before this version, the switch starts off and you have to turn it on deliberately. Check the setting after updating — otherwise leads keep arriving without a channel path, and nothing on the site tells you why.
+</Warning>
+
+### Step 3: Custom UTM Parameter Names (Optional)
+
+If your campaigns use parameter names of your own instead of the standard UTMs, open **Use custom UTM parameter names** and fill in the five fields, one per parameter. Leave the section alone if you use `utm_source` and friends — that is what every ad platform generates by default.
+
+<Info>
+The WordPress route has no session timeout setting. It uses the 30-minute default, the same value GA4 uses and the same default the GTM tag ships with. If you need a different window, use the GTM route.
+</Info>
+
+## Enable UTM Tracking in Your Ad Platforms
+
+Whichever route you set up, the quality of your channel flow depends on what your ads put in the URL. To get accurate source/medium/channel data in LeadTrackr, make sure **UTM parameters** are added to your ads.
+
+Channel Flow saves the following parameters:
 
 - `utm_source`
 - `utm_medium`
@@ -63,14 +122,8 @@ The tag saves the following parameters:
 - `utm_term`
 
 <Tip>
-No UTM parameters on your Google Ads campaigns? The tag falls back to the click ID that auto-tagging adds to the URL (`gclid`, `gbraid` or `wbraid`), and records the visit as `google / cpc`. Microsoft Ads works the same way through `msclkid`. UTM parameters still give you far more detail, since the fallback cannot tell you which campaign the click came from.
+No UTM parameters on your Google Ads campaigns? Channel Flow falls back to the click ID that auto-tagging adds to the URL (`gclid`, `gbraid` or `wbraid`), and records the visit as `google / cpc`. Microsoft Ads works the same way through `msclkid`. UTM parameters still give you far more detail, since the fallback cannot tell you which campaign the click came from.
 </Tip>
-
-## Step 5: Publish Your Container
-
-Once your tag and trigger are configured, **publish your GTM container**.
-
-Your channel flow tracking has now been set up, and will be automatically included in new lead entries.
 
 ## How ChannelFlow Records Sessions
 
