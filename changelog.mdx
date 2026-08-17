@@ -3,6 +3,17 @@ title: "Changelog"
 description: "Product updates and announcements"
 ---
 
+<Update label="17-08-2026" description="Lead sources">
+  - **Channel Flow**: Rebuilt — a lead's channel path now shows real sessions instead of channel changes. Three separate visits over three weeks used to collapse into a single touchpoint dated at the first; every visit is now its own entry, with the landing page it started on
+    - Visitors arriving through a country domain of a search engine, such as google.nl, were recorded as a referral instead of organic traffic
+    - Campaigns using auto-tagging without UTM parameters are now attributed through the click ID in the URL, so a Google Ads click no longer arrives as direct
+  - **Leads**: Every lead now records the page the conversion happened on and the Google Consent Mode state at that moment. Consent is recorded only — blocking remains the job of your consent banner
+  - **WordPress**: Channel Flow no longer needs Google Tag Manager. The plugin records the journey itself, and the LeadBot can be switched on straight from the plugin settings. On by default for new installations and left off on sites that update, so nothing changes on an existing site until you turn it on
+    - Fluent Forms and WPForms submit first and last name as one field, which used to end up in the first name in one piece
+    - A company name appearing above the first name in a form claimed that field, and the real first name was never stored
+  - **Google Tag Manager**: A new version of the tag template is available in the gallery. Accept the update per container and publish to pick up the changes above
+</Update>
+
 <Update label="29-07-2026" description="v1.3.1">
   - **Conversion Labels**: Added conversion paths — give a label an ordered set of prerequisite steps, and leads are automatically taken through each step (every step sending its own conversions) before the final label is applied
   - **Conversion Labels**: New "convert once" option — when enabled, a conversion is sent to the ad platforms at most once per lead; re-applying the label later only updates the lead's status without re-sending
