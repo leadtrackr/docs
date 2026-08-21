@@ -9,7 +9,7 @@ The Channel Flow Tracker records which marketing channels brought a visitor to y
 
 ## Two Ways to Set This Up
 
-Channel Flow runs either as a tag in Google Tag Manager or straight from the LeadTrackr WordPress plugin. Both routes write the same two cookies in the same format and follow the same logic, so the attribution you end up with is identical. Pick one:
+Channel Flow runs either as a tag in Google Tag Manager or straight from the LeadTrackr WordPress plugin. Both routes write the same two channel cookies in the same format and follow the same logic, so the attribution you end up with is identical. Pick one:
 
 - **Your site already uses GTM** — use the tag. It also covers pages that are not WordPress (a campaign landing page on another platform, a booking subdomain), and it is the only route with a configurable session timeout.
 - **There is no GTM on the site** — use the plugin. One switch in wp-admin, no container to publish and no second tool to keep in sync.
@@ -24,7 +24,7 @@ Channel Flow runs either as a tag in Google Tag Manager or straight from the Lea
 </CardGroup>
 
 <Note>
-There is no reason to run both. A site that happens to have both active stays consistent, since the two implementations write identical cookies — but you gain nothing and you get two places to check whenever attribution looks wrong.
+There is no reason to run both. A site that happens to have both active stays consistent, since the two implementations write identical channel cookies — but you gain nothing and you get two places to check whenever attribution looks wrong.
 </Note>
 
 ## Set Up with Google Tag Manager
@@ -165,37 +165,18 @@ A visitor who returns after the session timeout through a link on your own site 
 
 ## Cookies Used by ChannelFlow
 
-ChannelFlow uses two first-party cookies to build and maintain the visitor's channel journey.
+ChannelFlow builds the channel journey in two first-party cookies on your own domain:
 
-### lt_channelflow
+| Cookie | What it is for | Lifetime |
+| --- | --- | --- |
+| `lt_channelflow` | The visitor's marketing channel path | 395 days |
+| `lt_session` | Whether the visitor is still in the same session | 30 minutes of inactivity |
 
-The `lt_channelflow` cookie stores the visitor's marketing channel path. It contains attribution data such as the source, medium, campaign and landing page for each recorded session. The cookie does not contain personal information or a unique visitor identifier and is used solely for first-party analytical attribution.
+Neither cookie contains personal information or a unique visitor identifier, and neither is used for advertising, profiling or cross-site tracking. The channel path is only read when a visitor becomes a lead.
 
-### lt_session
-
-The `lt_session` cookie is a lightweight session cookie used to determine whether a visitor is still within the same browsing session. By default, it expires after 30 minutes of inactivity. It does not store any visitor information and simply indicates whether a new ChannelFlow session should be started.
-
-Together, these cookies allow ChannelFlow to accurately reconstruct a visitor's marketing journey without relying on persistent user identifiers or cross-site tracking.
-
-## Privacy by Design
-
-ChannelFlow was designed according to privacy-by-design principles. Instead of generating or storing a unique visitor identifier, it stores only the visitor's marketing channel path in a first-party cookie. In other words, ChannelFlow stores the marketing journey, not the identity of the visitor.
-
-The cookie itself does not contain personal information or a unique identifier. It stores only attribution data, such as the marketing source, medium, campaign and landing page of each session. It is not used for advertising, profiling, remarketing or cross-site tracking.
-
-The cookie is only read when a visitor submits a form or otherwise becomes a converted lead. At that point, the stored channel path is attached to the lead in LeadTrackr for first-party attribution reporting.
-
-When determining how to classify the ChannelFlow cookie, you may want to consider the following:
-
-- No unique visitor identifier is generated or stored.
-- The cookie is first-party and remains on your own domain.
-- It stores only marketing attribution data for analytical purposes.
-- It is not used for advertising, profiling or cross-site tracking.
-- The cookie is only read when a lead is created and the attribution data is attached to that lead.
-
-<Note>
-Whether the ChannelFlow cookie should be classified as a functional or analytical cookie depends on your own legal assessment, local regulations and the way it is implemented within your organisation.
-</Note>
+<Card title="Cookies Used by LeadTrackr" icon="cookie-bite" href="/reference/cookies">
+  The full overview for your cookie policy, including the two extra cookies the WordPress plugin writes and how to classify them
+</Card>
 
 ## What's Next?
 

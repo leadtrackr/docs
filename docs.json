@@ -71,6 +71,12 @@
               "conversion-labels/set-up-conversion-labels",
               "conversion-labels/structure-conversion-labels"
             ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/cookies"
+            ]
           }
         ]
       },

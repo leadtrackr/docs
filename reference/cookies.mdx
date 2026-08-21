@@ -1,0 +1,94 @@
+---
+title: "Cookies Used by LeadTrackr"
+sidebarTitle: "Cookies"
+description: "Every cookie LeadTrackr writes on your website, what it is for, how long it lives and which part of LeadTrackr sets it."
+icon: "cookie-bite"
+---
+
+LeadTrackr writes a small number of **first-party cookies** on your own domain. They are never shared with another website and none of them contains a name, an email address or a unique visitor identifier.
+
+Use this page when you fill in your cookie policy or configure your consent banner.
+
+## Overview
+
+| Cookie | What it is for | Lifetime | Set by |
+| --- | --- | --- | --- |
+| `lt_channelflow` | The visitor's marketing channel path | 395 days | GTM tag, WordPress plugin, LeadBot |
+| `lt_session` | Whether the visitor is still in the same session | 30 minutes of inactivity | GTM tag, WordPress plugin, LeadBot |
+| `lt_consent` | The visitor's consent status, so it travels along with the lead | 30 minutes of inactivity | WordPress plugin |
+| `lt_probe` | Technical check, written and deleted immediately | Removed within the same pageview | WordPress plugin |
+| `yeswetrack_…` | The phone number a visitor was shown | Set by call tracking | Call tracking script |
+
+All LeadTrackr cookies are written with `SameSite=Lax` and, on an HTTPS site, the `Secure` flag.
+
+## lt_channelflow
+
+The `lt_channelflow` cookie stores the visitor's marketing channel path. It contains attribution data such as the source, medium, campaign and landing page for each recorded session. The cookie does not contain personal information or a unique visitor identifier and is used solely for first-party analytical attribution.
+
+It is read only when a visitor becomes a lead. At that moment the stored channel path is attached to the lead, which is what lets you see that a "direct" conversion actually started with a Google Ads click three weeks earlier.
+
+See [Channel Flow Tracker](/lead-sources/channel-flow-tracker) for how the path is built and how a channel is determined.
+
+## lt_session
+
+The `lt_session` cookie is a lightweight session cookie used to determine whether a visitor is still within the same browsing session. By default, it expires after 30 minutes of inactivity — the same window GA4 uses. It does not store any visitor information and simply indicates whether a new Channel Flow session should be started.
+
+<Info>
+The GTM route lets you change the session timeout on the tag. The WordPress plugin and the LeadBot always use 30 minutes.
+</Info>
+
+## lt_consent
+
+The `lt_consent` cookie records the visitor's Google Consent Mode status — whether analytics and advertising storage were granted or denied — so that the consent status is sent along with the lead into LeadTrackr. Every lead then carries the consent state that applied at the moment it was submitted, and your conversion destinations can act on it.
+
+It stores nothing but `granted` and `denied` values, holds no visitor information, and is rewritten the moment a visitor changes their choice in your consent banner. If the site has no Consent Mode at all, the cookie is not set.
+
+<Info>
+Only the WordPress plugin uses this cookie. With the GTM route, the tag reads the consent status directly from Consent Mode inside Tag Manager, so no cookie is needed.
+</Info>
+
+## lt_probe
+
+The `lt_probe` cookie is a purely technical check. The WordPress plugin writes it once to find out on which domain cookies can be stored — a `.co.uk` or `.com.au` site works differently from a `.nl` site — and deletes it again in the same instant. It holds no data, no visitor information, and never survives the pageview it was created in.
+
+A cookie scanner may still pick it up while scanning, which is why it is listed here.
+
+## Call tracking cookies
+
+If you use LeadTrackr call tracking with dynamic number insertion, the swap script stores which phone number a visitor was shown in cookies starting with `yeswetrack_`. That is what allows an incoming call to be matched back to the right marketing source.
+
+These cookies are written by the call tracking script, not by the Channel Flow Tracker or the plugin. They only appear on sites where call tracking is active.
+
+## Privacy by Design
+
+LeadTrackr's cookies were designed according to privacy-by-design principles. Instead of generating or storing a unique visitor identifier, they store only the visitor's marketing channel path in a first-party cookie. In other words, LeadTrackr stores the marketing journey, not the identity of the visitor.
+
+The cookies do not contain personal information or a unique identifier. They store only attribution data, such as the marketing source, medium, campaign and landing page of each session. They are not used for advertising, profiling, remarketing or cross-site tracking.
+
+The channel path is only read when a visitor submits a form or otherwise becomes a converted lead. At that point it is attached to the lead in LeadTrackr for first-party attribution reporting.
+
+When determining how to classify these cookies, you may want to consider the following:
+
+- No unique visitor identifier is generated or stored.
+- The cookies are first-party and remain on your own domain.
+- They store only marketing attribution data for analytical purposes.
+- They are not used for advertising, profiling or cross-site tracking.
+- The channel path is only read when a lead is created and the attribution data is attached to that lead.
+
+<Note>
+Whether these cookies should be classified as functional or analytical depends on your own legal assessment, local regulations and the way LeadTrackr is implemented within your organisation.
+</Note>
+
+## Where These Cookies Come From
+
+<CardGroup cols={3}>
+  <Card title="WordPress Plugin" icon="wordpress" href="/lead-sources/wordpress-forms">
+    Writes all four `lt_` cookies when Channel Flow is enabled
+  </Card>
+  <Card title="Channel Flow Tracker" icon="route" href="/lead-sources/channel-flow-tracker">
+    Writes `lt_channelflow` and `lt_session` through GTM
+  </Card>
+  <Card title="LeadBot" icon="comments" href="/lead-sources/leadbot">
+    Writes `lt_channelflow` and `lt_session`
+  </Card>
+</CardGroup>
