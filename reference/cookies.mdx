@@ -17,7 +17,6 @@ Use this page when you fill in your cookie policy or configure your consent bann
 | `lt_session` | Whether the visitor is still in the same session | 30 minutes of inactivity | GTM tag, WordPress plugin, LeadBot |
 | `lt_consent` | The visitor's consent status, so it travels along with the lead | 30 minutes of inactivity | WordPress plugin |
 | `lt_probe` | Technical check, written and deleted immediately | Removed within the same pageview | WordPress plugin |
-| `yeswetrack_…` | The phone number a visitor was shown | Set by call tracking | Call tracking script |
 
 All LeadTrackr cookies are written with `SameSite=Lax` and, on an HTTPS site, the `Secure` flag.
 
@@ -52,12 +51,6 @@ Only the WordPress plugin uses this cookie. With the GTM route, the tag reads th
 The `lt_probe` cookie is a purely technical check. The WordPress plugin writes it once to find out on which domain cookies can be stored — a `.co.uk` or `.com.au` site works differently from a `.nl` site — and deletes it again in the same instant. It holds no data, no visitor information, and never survives the pageview it was created in.
 
 A cookie scanner may still pick it up while scanning, which is why it is listed here.
-
-## Call tracking cookies
-
-If you use LeadTrackr call tracking with dynamic number insertion, the swap script stores which phone number a visitor was shown in cookies starting with `yeswetrack_`. That is what allows an incoming call to be matched back to the right marketing source.
-
-These cookies are written by the call tracking script, not by the Channel Flow Tracker or the plugin. They only appear on sites where call tracking is active.
 
 ## Privacy by Design
 
