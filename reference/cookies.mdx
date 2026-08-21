@@ -26,11 +26,48 @@ The `lt_channelflow` cookie stores the visitor's marketing channel path. It cont
 
 It is read only when a visitor becomes a lead. At that moment the stored channel path is attached to the lead, which is what lets you see that a "direct" conversion actually started with a Google Ads click three weeks earlier.
 
+Example value, of a visitor who arrived through a Google Ads campaign and came back directly five days later:
+
+```json
+[
+  {
+    "t": 1784615580000,
+    "ch": { "s": "google", "m": "cpc", "cm": "zomeractie", "ct": "tekstadvertentie" },
+    "lp": "/conversion-tracking"
+  },
+  { "t": 1785085320000, "ch": { "s": "direct", "m": "none" }, "lp": "/pricing" }
+]
+```
+
+The keys are short to keep the cookie under the 4 KB browser limit:
+
+| Key | Meaning | Example |
+| --- | --- | --- |
+| `t` | Timestamp of the session start, in milliseconds | `1784615580000` |
+| `ch.s` | Source | `google`, `direct`, `www.example.com` |
+| `ch.m` | Medium | `cpc`, `organic`, `referral`, `none` |
+| `ch.cm` | Campaign, only when a `utm_campaign` was present | `zomeractie` |
+| `ch.ct` | Content, only when a `utm_content` was present | `tekstadvertentie` |
+| `ch.tm` | Term, only when a `utm_term` was present | `conversion tracking` |
+| `lp` | Landing page path, truncated at 100 characters | `/conversion-tracking` |
+
+<Note>
+The value is stored URL-encoded, so in your browser's developer tools you will see `%5B%7B%22t%22%3A1784615580000…` rather than the readable JSON above.
+</Note>
+
 See [Channel Flow Tracker](/lead-sources/channel-flow-tracker) for how the path is built and how a channel is determined.
 
 ## lt_session
 
 The `lt_session` cookie is a lightweight session cookie used to determine whether a visitor is still within the same browsing session. By default, it expires after 30 minutes of inactivity — the same window GA4 uses. It does not store any visitor information and simply indicates whether a new Channel Flow session should be started.
+
+Example value:
+
+```
+1
+```
+
+That is the entire contents. The cookie's existence is the signal that a session is running; its expiry is left to the browser.
 
 <Info>
 The GTM route lets you change the session timeout on the tag. The WordPress plugin and the LeadBot always use 30 minutes.
@@ -42,6 +79,19 @@ The `lt_consent` cookie records the visitor's Google Consent Mode status — whe
 
 It stores nothing but `granted` and `denied` values, holds no visitor information, and is rewritten the moment a visitor changes their choice in your consent banner. If the site has no Consent Mode at all, the cookie is not set.
 
+Example value, of a visitor who accepted analytics but declined personalised advertising:
+
+```json
+{
+  "ad_storage": "granted",
+  "analytics_storage": "granted",
+  "ad_user_data": "granted",
+  "ad_personalization": "denied"
+}
+```
+
+A consent type the site never sets is left out of the cookie entirely, rather than being guessed at. This value is also stored URL-encoded.
+
 <Info>
 Only the WordPress plugin uses this cookie. With the GTM route, the tag reads the consent status directly from Consent Mode inside Tag Manager, so no cookie is needed.
 </Info>
@@ -49,6 +99,12 @@ Only the WordPress plugin uses this cookie. With the GTM route, the tag reads th
 ## lt_probe
 
 The `lt_probe` cookie is a purely technical check. The WordPress plugin writes it once to find out on which domain cookies can be stored — a `.co.uk` or `.com.au` site works differently from a `.nl` site — and deletes it again in the same instant. It holds no data, no visitor information, and never survives the pageview it was created in.
+
+Example value:
+
+```
+1
+```
 
 A cookie scanner may still pick it up while scanning, which is why it is listed here.
 
