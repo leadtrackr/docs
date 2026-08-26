@@ -1,13 +1,14 @@
 ---
 title: "Setting up the LeadTrackr LeadBot"
 sidebarTitle: "LeadBot"
-description: "Add the LeadBot to any website and turn visitors into tracked leads via contact form, phone, or WhatsApp."
+description: "Add the LeadBot to any website and turn visitors into tracked leads through your own forms, phone, or WhatsApp."
 icon: "robot"
 ---
 
-The LeadTrackr LeadBot is a lightweight contact widget that sits in the bottom corner of your website. Visitors can send a message, call you directly, or start a WhatsApp conversation — and every lead lands in your LeadTrackr project with full attribution (channel flow, `gclid`, `wbraid`, `fbc`, `fbp`, and GA4 client ID).
+The LeadTrackr LeadBot is a lightweight contact bot that sits in the bottom corner of your website. Visitors can fill in a form, call you directly, or start a WhatsApp conversation — and every lead lands in your LeadTrackr project with full attribution (channel flow, `gclid`, `wbraid`, `fbc`, `fbp`, and GA4 client ID).
 
-- **One script tag** — a single self-contained file (±13 KB gzip), no dependencies
+- **One script tag** — a single self-contained file (±20 KB gzip), no dependencies
+- **Your own forms** — compose as many forms as you need, with your own fields, straight from the configuration
 - **No styling conflicts** — renders inside a Shadow DOM, so your site's CSS and the LeadBot never interfere
 - **Compatible with the rest of LeadTrackr** — shares the same [ChannelFlow cookies](/lead-sources/channel-flow-tracker#cookies-used-by-channelflow) and lead format, so the LeadBot runs side by side with the [GTM tag](/lead-sources/gtm) and the [WordPress plugin](/lead-sources/wordpress-forms)
 - **Multilingual** — follows your page's `lang` attribute (`nl`/`en`, falls back to English)
@@ -70,7 +71,8 @@ All options go in `window.ltLeadBotConfig`:
 | `greeting` | per language | Greeting in the teaser, panel, and WhatsApp chat |
 | `phone` | `null` | Phone number for the call channel; `null` hides the channel |
 | `whatsapp` | `null` | WhatsApp number (wa.me target); `null` hides the channel |
-| `channels` | `["contact_form","phone","whatsapp"]` | Order equals display order; a subset is allowed |
+| `channels` | `["contact_form","phone","whatsapp"]` | Order equals display order; every id that is not `phone` or `whatsapp` must exist in `forms` |
+| `forms` | built-in `contact_form` | Your own forms and their fields ([see below](#forms)) |
 | `launcher` | `true` | `false` hides the LeadBot launcher entirely, e.g. to run [interceptor-only](#whatsapp-interceptor) |
 | `whatsappInterceptor` | `false` | `true` intercepts clicks on your site's existing WhatsApp links and opens the LeadBot flow instead ([see below](#whatsapp-interceptor)) |
 | `position` | `"right"` | `"right"` or `"left"` |
@@ -84,6 +86,65 @@ All options go in `window.ltLeadBotConfig`:
 | `texts` | per language | Override any UI string per key |
 
 <Tip>When `agentName` is set, the LeadBot speaks in first person ("How can I help you?"). Without an agent it uses "we" instead.</Tip>
+
+### Forms
+
+Every form is a channel of its own. Its id goes in `channels` (whether the button shows, and where) and in `forms` (what sits behind it). Without a `forms` block you get the built-in `contact_form`: name, email address, and message.
+
+```js
+window.ltLeadBotConfig = {
+  projectId: "YOUR_PROJECT_ID",
+  channels: ["callback", "contact_form", "phone", "whatsapp"],
+  forms: {
+    callback: {
+      title: "Request a callback",           // button in the panel
+      sub: "We call you back the same day",  // line underneath
+      icon: "phone",                         // chat | phone | mail | whatsapp
+      formName: "LeadBot — Callback",        // the lead's form name in LeadTrackr
+      successTitle: "Thanks!",
+      successBody: "We will call you back shortly.",
+      fields: [
+        { key: "name", required: true },
+        { key: "company", label: "Company name", required: true },
+        { key: "phone", required: true },
+        { key: "message", placeholder: "What is your question about?" }
+      ]
+    }
+  }
+};
+```
+
+A field is `{ key, label, type, required, placeholder }` and only `key` is required. Keys may contain letters, digits, `_`, and `-`; a field with any other key is skipped.
+
+| Field type | Behavior |
+|---|---|
+| `text` | Plain input (the default) |
+| `email` | Validated as an email address |
+| `tel` | Native country code selector, stored as an E.164 number |
+| `textarea` | Multi-line input |
+
+Fields without `required: true` are optional and are labeled as such.
+
+#### Reserved keys
+
+Four keys carry a fixed meaning. Use them and the value lands in the lead's user data and in the `user_data` object for enhanced conversions:
+
+| Key | Goes to |
+|---|---|
+| `name` | First and last name, split on the first space |
+| `email` | Email address |
+| `phone` | Phone number |
+| `message` | The lead's message |
+
+Every other key travels along as a regular form field on the lead. For the four reserved keys you do not need to fill in anything else — label, type, and placeholder come from the language file:
+
+```js
+fields: [{ key: "name" }, { key: "email" }, { key: "message" }]  // the built-in form
+```
+
+Anything you leave out falls back to your page's language, so `{ title, fields }` is enough for a working form. To change the built-in form, define `contact_form` in `forms` — your definition wins. A form without a usable field gets no button.
+
+<Tip>Because each form is its own channel, its id is what appears in `channel` in the dataLayer. That lets you trigger a Google Ads conversion on a callback request alone, separately from a general enquiry.</Tip>
 
 ### Theme
 
@@ -138,7 +199,7 @@ The LeadBot pushes three events, always flat — only `event`, `channel`, and `u
 // LeadBot opened
 window.dataLayer.push({ event: "leadtrackr_leadbot_open" });
 
-// Channel selected (contact_form | phone | whatsapp)
+// Channel selected (phone | whatsapp | the id of one of your forms)
 window.dataLayer.push({ event: "leadtrackr_leadbot_channel_click", channel: "whatsapp" });
 
 // Conversion — user_data depends on the channel
@@ -217,7 +278,7 @@ Releases and source code live at [github.com/leadtrackr/leadtrackr-leadbot](http
 
 **The LeadBot does not appear.** Check the browser console: `[LeadTrackr LeadBot] data-project-id ontbreekt` means no `projectId` was found. Make sure it is set in `ltLeadBotConfig` and the config block sits above the script tag.
 
-**A channel is missing.** The call channel only shows with a `phone` number (or `callTracking` enabled), and the WhatsApp channel only with a `whatsapp` number.
+**A channel is missing.** The call channel only shows with a `phone` number (or `callTracking` enabled), and the WhatsApp channel only with a `whatsapp` number. Any other id in `channels` needs a matching entry in `forms` with at least one usable field.
 
 **You seem to load an old version.** Open DevTools → Network, click `lt-leadbot.min.js`, and check the `x-jsd-version` response header. Hard refresh (Cmd/Ctrl+Shift+R) to bypass browser cache, or pin the latest version in the URL.
 

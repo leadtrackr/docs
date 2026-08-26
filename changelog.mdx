@@ -3,6 +3,15 @@ title: "Changelog"
 description: "Product updates and announcements"
 ---
 
+<Update label="26-08-2026" description="LeadBot">
+  - **LeadBot**: Build your own forms — give a form an id, a title, and a list of fields, and it becomes its own channel in the panel. A callback request with a company name can now sit next to a general enquiry, each with its own fields and its own confirmation
+    - Fields come in four types: text, email, phone (with a country code selector), and multi-line text
+    - The keys `name`, `email`, `phone`, and `message` keep their meaning and feed enhanced conversions; every other field travels along with the lead
+    - Each form pushes its own id as `channel` in the dataLayer, so you can trigger a conversion on one form alone
+  - Existing setups are unaffected: without a `forms` block the LeadBot shows the same contact form as before
+
+</Update>
+
 <Update label="17-08-2026" description="Lead sources">
   - **Channel Flow**: Rebuilt — a lead's channel path now shows real sessions instead of channel changes. Three separate visits over three weeks used to collapse into a single touchpoint dated at the first; every visit is now its own entry, with the landing page it started on
     - Visitors arriving through a country domain of a search engine, such as google.nl, were recorded as a referral instead of organic traffic
