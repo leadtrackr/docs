@@ -3,6 +3,12 @@ title: "Changelog"
 description: "Product updates and announcements"
 ---
 
+<Update label="28-08-2026" description="v1.4.0">
+  - **Lead Matching**: Repeat submissions from the same person are now matched on email or phone number and merged into one complete lead, so your ad platforms get the full picture instead of a half-filled duplicate. Set the matching window per project under Settings → General, and switch off call merging separately if every call should stay its own lead
+  - **Integrations**: Incoming events can now create and enrich leads, not just convert leads that already exist. Both options sit under **Advanced** in the connection drawer and are off by default
+  - **Custom Webhooks**: New option to return the matched lead in the webhook response, so the sending system can chain follow-up calls, for example from server-side Google Tag Manager
+</Update>
+
 <Update label="26-08-2026" description="LeadBot">
   - **LeadBot**: Build your own forms — give a form an id, a title, and a list of fields, and it becomes its own channel in the panel. A callback request with a company name can now sit next to a general enquiry, each with its own fields and its own confirmation
     - Fields come in four types: text, email, phone (with a country code selector), and multi-line text
@@ -10,6 +16,16 @@ description: "Product updates and announcements"
     - Each form pushes its own id as `channel` in the dataLayer, so you can trigger a conversion on one form alone
   - Existing setups are unaffected: without a `forms` block the LeadBot shows the same contact form as before
 
+</Update>
+
+<Update label="25-08-2026" description="v1.3.5">
+  - **Microsoft Ads (Beta)**: New conversion destination. Send offline conversions to Microsoft Advertising (Bing Ads) through the UET Conversions API. Paste your UET tag id and API token, pick the conversion goal per label, and LeadTrackr handles the rest. Marked Beta while we verify reporting with the first live accounts
+  - **ChatGPT Ads (Coming soon)**: The ChatGPT Ads destination is built and visible in Conversion Destinations.
+  - **Integrations**: Two new integrations available to all customers, **Recruitee** for candidate pipeline moves and **Teamleader Focus** for deal events
+</Update>
+
+<Update label="19-08-2026" description="v1.3.4">
+  - **Shopify**: New integration. Connect a store and turn order events into conversions, from order payment through refunds and cancellations
 </Update>
 
 <Update label="17-08-2026" description="Lead sources">
@@ -21,6 +37,11 @@ description: "Product updates and announcements"
     - Fluent Forms and WPForms submit first and last name as one field, which used to end up in the first name in one piece
     - A company name appearing above the first name in a form claimed that field, and the real first name was never stored
   - **Google Tag Manager**: A new version of the tag template is available in the gallery. Accept the update per container and publish to pick up the changes above
+</Update>
+
+<Update label="12-08-2026" description="v1.3.3">
+  - **Notifications**: New lead notifications now include the full channel path, and are on by default for new projects and newly invited members. Existing projects are untouched, and an account level opt-out always wins
+  - **Leads**: Table columns can be resized by dragging their edges, and your widths are remembered per project
 </Update>
 
 <Update label="29-07-2026" description="v1.3.1">
