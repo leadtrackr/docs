@@ -78,6 +78,7 @@ All options go in `window.ltLeadBotConfig`:
 | `position` | `"right"` | `"right"` or `"left"` |
 | `offset` | `{ bottom: 20, side: 20 }` | Distance from the corner in pixels |
 | `teaser` | `true` | Teaser bubble; a dismissal is remembered per session |
+| `teaserAutoHide` | not set | Optional. Hide the teaser automatically after a number of seconds, per device type, for example `{ mobile: 6 }`. Mobile means a touchscreen. Hiding counts as a dismissal for the rest of the session. Without this setting the teaser stays until the visitor closes it |
 | `defaultCountry` | auto | Preselected country in the WhatsApp phone step; defaults to the visitor's browser locale (`nl-BE` → Belgium), falling back to `NL`. No IP geolocation is used |
 | `language` | auto | Force `"nl"` or `"en"`; default follows the page's `lang` attribute |
 | `responseTimeText` | per language | For example `"Average response time: within 15 minutes"` |

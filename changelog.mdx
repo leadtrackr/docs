@@ -3,6 +3,12 @@ title: "Changelog"
 description: "Product updates and announcements"
 ---
 
+<Update label="08-10-2026" description="LeadBot">
+  - **LeadBot**: New optional setting `teaserAutoHide` hides the teaser after a set number of seconds, separately for mobile and desktop. Useful on mobile, where the teaser can cover content or clash with your own pop-ups: `teaserAutoHide: { mobile: 6 }`
+  - Once hidden, the teaser stays away for the rest of the session, just as when the visitor closes it
+  - Existing setups are unaffected: without the setting the teaser behaves as before
+</Update>
+
 <Update label="28-08-2026" description="v1.4.0">
   - **Lead Matching**: Repeat submissions from the same person are now matched on email or phone number and merged into one complete lead, so your ad platforms get the full picture instead of a half-filled duplicate. Set the matching window per project under Settings → General, and switch off call merging separately if every call should stay its own lead
   - **Integrations**: Incoming events can now create and enrich leads, not just convert leads that already exist. Both options sit under **Advanced** in the connection drawer and are off by default
