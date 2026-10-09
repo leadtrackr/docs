@@ -3,6 +3,12 @@ title: "Changelog"
 description: "Product updates and announcements"
 ---
 
+<Update label="09-10-2026" description="LeadBot">
+  - **LeadBot**: New reserved form key `company`. A field with this key now arrives in LeadTrackr as the lead's company name instead of only as a loose form field
+  - **LeadBot**: New setting `whatsappLead: false` skips creating a lead for WhatsApp. WhatsApp still opens and the conversion event still fires, so your ad platforms keep measuring it
+  - Existing setups are unaffected: both changes only apply when you use the new key or setting
+</Update>
+
 <Update label="08-10-2026" description="LeadBot">
   - **LeadBot**: New optional setting `teaserAutoHide` hides the teaser after a set number of seconds, separately for mobile and desktop. Useful on mobile, where the teaser can cover content or clash with your own pop-ups: `teaserAutoHide: { mobile: 6 }`
   - Once hidden, the teaser stays away for the rest of the session, just as when the visitor closes it

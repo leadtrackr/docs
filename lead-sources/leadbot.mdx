@@ -75,6 +75,7 @@ All options go in `window.ltLeadBotConfig`:
 | `forms` | built-in `contact_form` | Your own forms and their fields ([see below](#forms)) |
 | `launcher` | `true` | `false` hides the LeadBot launcher entirely, e.g. to run [interceptor-only](#whatsapp-interceptor) |
 | `whatsappInterceptor` | `false` | `true` intercepts clicks on your site's existing WhatsApp links and opens the LeadBot flow instead ([see below](#whatsapp-interceptor)) |
+| `whatsappLead` | `true` | `false` skips creating a lead for WhatsApp. WhatsApp still opens and the conversion event still fires ([see below](#how-the-whatsapp-flow-works)) |
 | `position` | `"right"` | `"right"` or `"left"` |
 | `offset` | `{ bottom: 20, side: 20 }` | Distance from the corner in pixels |
 | `teaser` | `true` | Teaser bubble; a dismissal is remembered per session |
@@ -128,7 +129,7 @@ Fields without `required: true` are optional and are labeled as such.
 
 #### Reserved keys
 
-Four keys carry a fixed meaning. Use them and the value lands in the lead's user data and in the `user_data` object for enhanced conversions:
+Five keys carry a fixed meaning. Use them and the value lands in the lead's user data, and for the first four also in the `user_data` object for enhanced conversions:
 
 | Key | Goes to |
 |---|---|
@@ -136,8 +137,9 @@ Four keys carry a fixed meaning. Use them and the value lands in the lead's user
 | `email` | Email address |
 | `phone` | Phone number |
 | `message` | The lead's message |
+| `company` | Company name on the lead. It also travels along as a regular form field |
 
-Every other key travels along as a regular form field on the lead. For the four reserved keys you do not need to fill in anything else — label, type, and placeholder come from the language file:
+Every other key travels along as a regular form field on the lead. For the reserved keys you do not need to fill in anything else — label, type, and placeholder come from the language file:
 
 ```js
 fields: [{ key: "name" }, { key: "email" }, { key: "message" }]  // the built-in form
@@ -227,6 +229,8 @@ Use `leadtrackr_leadbot_conversion` as the trigger for your GA4, Google Ads, or 
 4. WhatsApp opens in a new tab with the message prefilled — the visitor sends it there to start the conversation
 
 You capture the lead and its attribution even if the visitor never sends the WhatsApp message.
+
+Set `whatsappLead: false` if you don't want WhatsApp leads in LeadTrackr. The visitor goes straight to WhatsApp, and `leadtrackr_leadbot_conversion` with `channel: "whatsapp"` still lands in the dataLayer, so your ad platforms keep seeing the conversion. LeadTrackr then sends no offline conversions for WhatsApp. This applies to the panel and to the WhatsApp Interceptor.
 
 The message field is multi-line and grows with the content. On desktop, Enter sends and Shift+Enter adds a line break; on mobile the return key adds a line break and the send button sends — the same behavior as WhatsApp itself.
 
