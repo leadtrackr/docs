@@ -66,6 +66,12 @@
             ]
           },
           {
+            "group": "CRM & Automation",
+            "pages": [
+              "crm/lead-webhook"
+            ]
+          },
+          {
             "group": "Conversion Labels",
             "pages": [
               "conversion-labels/set-up-conversion-labels",

@@ -15,6 +15,11 @@ description: "Product updates and announcements"
   - Existing setups are unaffected: without the setting the teaser behaves as before
 </Update>
 
+<Update label="13-09-2026" description="Lead webhook">
+  - **Lead webhook**: Send every new lead as JSON to your CRM or automation tool, with contact details, form data, click IDs, and the channel flow. Set it up under Project Settings → Notifications → Webhook. See [Send new leads to your CRM](/crm/lead-webhook)
+  - Failed deliveries are retried once. After 10 failed leads in a row the webhook pauses itself, and you can resend missed leads in one click or a single lead from its details
+</Update>
+
 <Update label="28-08-2026" description="v1.4.0">
   - **Lead Matching**: Repeat submissions from the same person are now matched on email or phone number and merged into one complete lead, so your ad platforms get the full picture instead of a half-filled duplicate. Set the matching window per project under Settings → General, and switch off call merging separately if every call should stay its own lead
   - **Integrations**: Incoming events can now create and enrich leads, not just convert leads that already exist. Both options sit under **Advanced** in the connection drawer and are off by default

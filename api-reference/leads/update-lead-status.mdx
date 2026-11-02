@@ -6,6 +6,10 @@ description: "Update a lead's status and queue it for conversion processing."
 
 Updates a lead's status by assigning it a conversion label. The lead is then queued for processing, which sends the conversion to your connected ad platforms (Google Ads, Meta, etc.).
 
+<Tip>
+  Getting leads into your CRM with the [lead webhook](/crm/lead-webhook)? Store `lead.id` from the webhook on the CRM record and pass it here as `leadId`. That is the most reliable way to find the lead again.
+</Tip>
+
 ## Identifying a lead
 
 You can identify the lead to update using any one of the following fields. At least one is required. If multiple are provided, the following priority order is used:
