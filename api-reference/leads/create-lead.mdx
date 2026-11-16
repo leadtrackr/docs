@@ -78,6 +78,14 @@ For **server-side** integrations where you control the backend, use [Create Serv
   A user-provided identifier to link this lead to your own system (e.g. your CRM lead ID or form submission ID). Max 255 characters. Also accepted as `unique_identifier`.
 </ParamField>
 
+<ParamField body="value" type="number">
+  The value of the lead in normal currency notation, e.g. `1250.50`. Not in cents. Use a dot as the decimal separator, at most two decimals. Used as the conversion value sent to your ad platforms, unless a later [status update](/api-reference/leads/update-lead-status) brings its own value. An invalid value is ignored; the lead is still created.
+</ParamField>
+
+<ParamField body="currency" type="string">
+  ISO 4217 currency code of `value`, e.g. `"EUR"` or `"USD"`. Defaults to your project currency.
+</ParamField>
+
 ## Response
 
 <ResponseField name="message" type="string">

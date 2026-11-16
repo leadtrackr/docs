@@ -49,6 +49,9 @@ Rules:
   }
   Only send the userData fields the form actually has. Phone numbers with
   country code (+31612345678). Any other form fields can go in formData as-is.
+- If a form has a known value (an order total, a quote amount), also send
+  "value" (normal notation with a dot, e.g. 1250.50, NOT in cents) and
+  "currency" (e.g. "EUR") at the top level of the body.
 - pageUrl: use the Referer header of the form request. If our site sets a
   strict Referrer-Policy, add a hidden field to the form filled with
   location.href and use that instead.
