@@ -5,13 +5,9 @@ description: "Send leads from your own forms to LeadTrackr with one server-side 
 icon: "code"
 ---
 
-<Warning>
-**Preview.** Forwarding the `Cookie` header is not live in the API yet. This guide describes how it will work.
-</Warning>
+Built your own website with your own forms, or had an AI build it? Then you connect it to LeadTrackr with **one API call from your server**, right after a form is submitted. You forward the visitor's cookies as they are. LeadTrackr finds the click IDs and consent in them by itself.
 
-Built your own website with your own forms? Then you connect it to LeadTrackr with **one API call from your server**, right after a form is submitted. You forward the visitor's cookies as they are. LeadTrackr finds the click IDs and consent in them by itself.
-
-You don't have to write this code yourself. Copy the prompt below into your AI coding agent (Claude Code, Cursor, Copilot, …) and let it do the integration.
+You don't have to write this code yourself. Give your AI coding agent (Claude Code, Cursor, Copilot, …) the prompt below and let it do the integration.
 
 ## What you need
 
@@ -24,53 +20,51 @@ Store the API key as a server environment variable, for example `LEADTRACKR_API_
 
 Copy this prompt into your agent, in the repository of your website:
 
-````text
-Integrate our website forms with LeadTrackr.
-
-Docs: https://leadtrackr.io/docs/lead-sources/custom-forms
-
-Rules:
-- Send every successful form submission to LeadTrackr from the SERVER,
-  in the code that handles the form after it has been validated and saved.
-  Never call LeadTrackr from browser JavaScript.
-- Endpoint: POST https://app.leadtrackr.io/api/leads/createServerSideLead
-- Headers:
-  - Content-Type: application/json
-  - X-API-Key: read from the environment variable LEADTRACKR_API_KEY
-  - Cookie: the visitor's Cookie header from the incoming form request,
-    forwarded unchanged. Do not parse, filter or rebuild the cookies.
-- Body (JSON):
-  {
-    "projectId": "<our project ID>",
-    "userData": { "firstName", "lastName", "email", "phone", "companyName" },
-    "formData": { "formName": "<readable form name>", "uniqueEventId": "<our own submission ID>" },
-    "attributionData": { "pageUrl": "<full URL of the page the form was on, including the query string>" },
-    "deviceData": { "ipAddress": "<visitor IP>", "userAgent": "<visitor user agent>" }
-  }
-  Only send the userData fields the form actually has. Phone numbers with
-  country code (+31612345678). Any other form fields can go in formData as-is.
-- If a form has a known value (an order total, a quote amount), also send
-  "value" at the top level of the body: normal notation with a dot,
-  e.g. 1250.50, NOT in cents.
-- pageUrl: use the Referer header of the form request. If our site sets a
-  strict Referrer-Policy, add a hidden field to the form filled with
-  location.href and use that instead.
-- Never block or break the form: call LeadTrackr after the submission is
-  saved, with a timeout of 3 seconds, and catch and log every error.
-  The visitor must always get the normal success response.
-- Do not send a request when the form submission itself failed or was spam.
-
-When done, list every form you connected with its formName, and tell me
-how to test it.
-````
+```text
+Read https://leadtrackr.io/docs/lead-sources/custom-forms and help me
+connect our website forms to LeadTrackr. Ask me the questions under
+"Before you start" first, then implement it and tell me how to test it.
+```
 
 <Tip>
 Your agent can also read these docs directly. Use **Copy page** at the top of this page, or connect the LeadTrackr docs to your agent through the page menu (**MCP**).
 </Tip>
 
+## Before you start
+
+Answer these two questions first. They decide how the integration is built.
+
+### Is LeadTrackr the only place your leads are stored?
+
+- **No**, the form also saves to your database, CRM or mailbox: send the lead to LeadTrackr **after** that save, with a 3-second timeout, and catch every error. The visitor always gets the normal success message, even if LeadTrackr is slow or down.
+- **Yes**, LeadTrackr is the only place: **wait for the response**. Only show the success message after a `201`. On an error or timeout, show an error so the visitor can try again. Otherwise a failed call means a lost lead that nobody ever sees.
+
+### Can your phone field deliver E.164?
+
+Send phone numbers in [E.164](https://en.wikipedia.org/wiki/E.164) format: `+31612345678`, not `0612345678`. Ad platforms match leads on the phone number, so this directly affects your match quality.
+
+The most reliable way is a **country code selector** next to the phone field, instead of one free text field. Then you always know the country code and only have to strip spaces, dashes and the leading `0`.
+
+## What to send
+
+Call `POST https://app.leadtrackr.io/api/leads/createServerSideLead` from your **server**, in the code that handles the form after it has been validated:
+
+| | What |
+| --- | --- |
+| `X-API-Key` header | Your API key, from the environment |
+| `Cookie` header | The visitor's `Cookie` header from the incoming form request, **forwarded unchanged**. Don't parse, filter or rebuild it. |
+| `projectId` | Your project ID |
+| `userData` | `firstName`, `lastName`, `email`, `phone` (E.164), `companyName`. Only the fields the form has. |
+| `formData` | `formName` (readable) and `uniqueEventId` (your own submission ID). Other form fields may be added as they are. |
+| `attributionData.pageUrl` | Full URL of the page the form was on, **including the query string**. Use the `Referer` header of the form request, or a hidden field filled with `location.href` if your site sets a strict `Referrer-Policy`. |
+| `deviceData` | `ipAddress` and `userAgent` of the visitor |
+| `value` | Optional. A known value of the lead (order total, quote amount) in normal notation with a dot: `1250.50`, not cents. |
+
+Don't send anything when the submission itself failed or was spam.
+
 ## The call
 
-This is all the integration is. Every example forwards the `Cookie` header unchanged, sends the page URL and never lets an error reach the visitor.
+Every example forwards the `Cookie` header unchanged, sends the page URL and uses a 3-second timeout. They follow the **No** answer above: errors are logged, the form never breaks. If LeadTrackr is your only lead storage, return the result instead and only confirm the submission on a `201`.
 
 <CodeGroup>
 ```php PHP
@@ -222,6 +216,38 @@ LeadTrackr only reads the cookies it needs for attribution and consent: ad click
 
 Submitting the same form twice with the same `uniqueEventId` updates the lead instead of creating a second one.
 
+## Pro tip: a dataLayer event for your tracking
+
+Not needed for LeadTrackr, but worth giving your agent in the same go. Have the site push a `form_submission` event to the `dataLayer` after every successful submission. Then Google Tag Manager can use it for GA4, Google Ads and Meta without anyone writing a form listener later.
+
+```json
+{
+  "event": "form_submission",
+  "form_id": "1",
+  "form_name": "Contact form",
+  "entry_id": "123",
+  "user_data": {
+    "email": "user@example.com",
+    "phone_number": "+31612345678",
+    "first_name": "John",
+    "last_name": "Doe"
+  },
+  "fields": {
+    "Email Address": "user@example.com",
+    "Phone Number": "+31612345678",
+    "Full Name": "John Doe",
+    "Message": "Hello world"
+  }
+}
+```
+
+- **Only after a successful submission**, never on the button click. A submit with validation errors pushes nothing.
+- **Generic**: one implementation for every form, with `form_id`, `form_name` and `entry_id` filled dynamically.
+- **Both confirmation types**: push in the success callback for inline confirmations; for a redirect to a thank-you page the payload has to survive the page load.
+- **Exactly once per submission**, also when the thank-you page is refreshed.
+
+The full specification, with field mapping, normalisation and test criteria, is in the [YesWeTrack developer briefing](https://app.notion.com/p/3add9bd80a3e8091a8aad42f5678bfbb). Ask your agent to read it and to check with you before building it.
+
 ## Common mistakes
 
 | Mistake | What happens | Fix |
@@ -229,7 +255,8 @@ Submitting the same form twice with the same `uniqueEventId` updates the lead in
 | Calling LeadTrackr from browser JavaScript | Your API key is public, and `HttpOnly` cookies are missing | Call it from your server |
 | Not forwarding the `Cookie` header | Leads arrive without click IDs, so conversions can't be sent to your ad platforms | Forward `Cookie` from the incoming form request, unchanged |
 | Rebuilding or filtering the cookies yourself | Click IDs in a format LeadTrackr doesn't expect are skipped | Forward the header as it is |
-| Waiting for LeadTrackr before answering the visitor | A slow or failed call breaks your form | Use a timeout and catch every error |
+| Waiting for LeadTrackr while you also store the lead elsewhere | A slow or failed call breaks your form for nothing | Use a timeout and catch every error |
+| Not waiting for LeadTrackr when it's your only lead storage | A failed call loses the lead without anyone noticing | Wait for the `201` before confirming |
 | No `uniqueEventId` | A retried request creates a duplicate lead | Use your own submission ID |
 | Phone number without country code | Ad platforms can't match the lead | Send `+31612345678`, not `0612345678` |
 
