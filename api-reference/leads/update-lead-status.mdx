@@ -47,16 +47,8 @@ Only the highest-priority identifier is used — the others are ignored.
   You can find your conversion label IDs in the [LeadTrackr Dashboard](https://app.leadtrackr.io) under **Settings > Conversion Labels**. Each label has a unique UUID that you can copy and use as the `conversionId`. For more details on setting up conversion labels, see the [Conversion Labels guide](/conversion-labels/set-up-conversion-labels).
 </ParamField>
 
-<ParamField body="value" type="number">
-  The value of this conversion in normal currency notation, e.g. `50.00`. Not in cents. Use a dot as the decimal separator, at most two decimals. If provided, the lead's value is updated before processing.
-</ParamField>
-
-<ParamField body="currency" type="string">
-  ISO 4217 currency code of `value`, e.g. `"EUR"`. Defaults to the lead's currency, otherwise your project currency.
-</ParamField>
-
-<ParamField body="price" type="number" deprecated>
-  The same value in **cents** (e.g. `5000` for 50.00). Still accepted for existing integrations. Use `value` for new ones; when both are sent, `value` wins.
+<ParamField body="price" type="number">
+  Lead value in **cents** (e.g. `5000` for $50.00). Must be a non-negative number. If provided, the lead's price is updated before processing.
 </ParamField>
 
 <Note>
@@ -134,7 +126,7 @@ curl -X POST https://app.leadtrackr.io/api/leads/updateLeadStatus \
   -d '{
     "leadId": 42,
     "conversionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "value": 50.00
+    "price": 5000
   }'
 ```
 
@@ -148,7 +140,7 @@ const response = await fetch("https://app.leadtrackr.io/api/leads/updateLeadStat
   body: JSON.stringify({
     leadId: 42,
     conversionId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    value: 50.00
+    price: 5000
   })
 });
 
@@ -169,7 +161,7 @@ curl_setopt_array($ch, [
     CURLOPT_POSTFIELDS => json_encode([
         "leadId" => 42,
         "conversionId" => "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-        "value" => 50.00
+        "price" => 5000
     ])
 ]);
 

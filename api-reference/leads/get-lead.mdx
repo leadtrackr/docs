@@ -51,9 +51,7 @@ Only the highest-priority identifier is used — the others are ignored. For `em
     <ResponseField name="phone" type="string | null">Phone number</ResponseField>
     <ResponseField name="email" type="string | null">Email address</ResponseField>
     <ResponseField name="companyName" type="string | null">Company name</ResponseField>
-    <ResponseField name="value" type="number | null">Lead value in normal currency notation, e.g. `1250.5`</ResponseField>
-    <ResponseField name="currency" type="string">Currency of `value`, e.g. `"EUR"`</ResponseField>
-    <ResponseField name="price" type="number | null">The same value in cents. Kept for existing integrations</ResponseField>
+    <ResponseField name="price" type="number | null">Lead value in cents</ResponseField>
     <ResponseField name="note" type="string | null">Note attached to the lead</ResponseField>
     <ResponseField name="formData" type="object | null">Raw form submission data</ResponseField>
     <ResponseField name="userData" type="object | null">User contact data</ResponseField>
@@ -110,8 +108,6 @@ print_r($data["lead"]);
     "phone": "+31612345678",
     "email": "john@example.com",
     "companyName": "Acme Inc.",
-    "value": null,
-    "currency": "EUR",
     "price": null,
     "note": null,
     "formData": {

@@ -84,11 +84,7 @@ If a lead with the same `uniqueEventId` already exists, it will be updated inste
 </ParamField>
 
 <ParamField body="value" type="number">
-  The value of the lead in normal currency notation, e.g. `1250.50`. Not in cents. Use a dot as the decimal separator, at most two decimals. Used as the conversion value sent to your ad platforms, unless a later [status update](/api-reference/leads/update-lead-status) brings its own value. An invalid value is ignored; the lead is still created.
-</ParamField>
-
-<ParamField body="currency" type="string">
-  ISO 4217 currency code of `value`, e.g. `"EUR"` or `"USD"`. Defaults to your project currency.
+  The value of the lead in normal currency notation, e.g. `1250.50`, not in cents. Use a dot as the decimal separator, at most two decimals. Used as the conversion value sent to your ad platforms, unless a later [status update](/api-reference/leads/update-lead-status) brings its own value. An invalid value is ignored; the lead is still created.
 </ParamField>
 
 ## Response
@@ -134,8 +130,7 @@ curl -X POST https://app.leadtrackr.io/api/leads/createServerSideLead \
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
     },
     "uniqueIdentifier": "crm-lead-789",
-    "value": 1250.50,
-    "currency": "EUR"
+    "value": 1250.50
   }'
 ```
 
@@ -163,7 +158,8 @@ const response = await fetch("https://app.leadtrackr.io/api/leads/createServerSi
       formName: "Contact Form",
       uniqueEventId: "evt_xyz789"
     },
-    uniqueIdentifier: "crm-lead-789"
+    uniqueIdentifier: "crm-lead-789",
+    value: 1250.50
   })
 });
 
@@ -198,7 +194,8 @@ curl_setopt_array($ch, [
             "formName" => "Contact Form",
             "uniqueEventId" => "evt_xyz789"
         ],
-        "uniqueIdentifier" => "crm-lead-789"
+        "uniqueIdentifier" => "crm-lead-789",
+        "value" => 1250.50
     ])
 ]);
 
