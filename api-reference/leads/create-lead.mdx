@@ -34,7 +34,12 @@ For **server-side** integrations where you control the backend, use [Create Serv
 <ParamField body="attributionData" type="object">
   Attribution and tracking data. At least one of `userData` or `attributionData` must contain data.
 
+  The simplest way to fill it: send the visitor's cookies through `attributionData.cookies`, plus `pageUrl`. LeadTrackr picks out the click IDs, analytics IDs and consent, and discards the rest. See [Send attribution data](/api-reference/attribution-data).
+
   <Expandable title="attributionData properties">
+    <ParamField body="cookies" type="string | object" optional>The visitor's cookies, as a `Cookie` header string or an object of `{ "name": "value" }`. Only attribution and consent cookies are read; the rest is never stored.</ParamField>
+    <ParamField body="pageUrl" type="string" optional>Full URL of the page the lead came from, including the query string. Only host and path are stored.</ParamField>
+    <ParamField body="consent" type="object" optional>Consent status in Google Consent Mode terms, e.g. `{ "ad_storage": "granted" }`. Read from your consent banner's cookie when you leave it out.</ParamField>
     <ParamField body="gclid" type="string" optional>Google Click ID</ParamField>
     <ParamField body="wbraid" type="string" optional>Google Web-to-App Broad ID</ParamField>
     <ParamField body="cid" type="string" optional>Google Analytics Client ID (e.g. `1234567890.1234567890`)</ParamField>

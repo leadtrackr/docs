@@ -8,6 +8,12 @@ This endpoint is designed for **server-side** integrations. It requires an API k
 
 If a lead with the same `uniqueEventId` already exists, it will be updated instead of duplicated.
 
+## Headers
+
+<ParamField header="Cookie" type="string">
+  Optional. The visitor's `Cookie` header, forwarded unchanged from the request your server received. LeadTrackr reads only the attribution and consent cookies from it. See [Send attribution data](/api-reference/attribution-data).
+</ParamField>
+
 ## Request body
 
 <ParamField body="projectId" type="string" required>
@@ -29,7 +35,12 @@ If a lead with the same `uniqueEventId` already exists, it will be updated inste
 <ParamField body="attributionData" type="object">
   Attribution and tracking data. At least one of `userData` or `attributionData` must contain data.
 
+  The simplest way to fill it: send the visitor's cookies through the `Cookie` header or `attributionData.cookies`, plus `pageUrl`. LeadTrackr picks out the click IDs, analytics IDs and consent, and discards the rest. See [Send attribution data](/api-reference/attribution-data).
+
   <Expandable title="attributionData properties">
+    <ParamField body="cookies" type="string | object" optional>The visitor's cookies, as a `Cookie` header string or an object of `{ "name": "value" }`. Only attribution and consent cookies are read; the rest is never stored.</ParamField>
+    <ParamField body="pageUrl" type="string" optional>Full URL of the page the lead came from, including the query string. Only host and path are stored.</ParamField>
+    <ParamField body="consent" type="object" optional>Consent status in Google Consent Mode terms, e.g. `{ "ad_storage": "granted" }`. Read from your consent banner's cookie when you leave it out.</ParamField>
     <ParamField body="gclid" type="string" optional>Google Click ID</ParamField>
     <ParamField body="wbraid" type="string" optional>Google Web-to-App Broad ID</ParamField>
     <ParamField body="cid" type="string" optional>Google Analytics Client ID (e.g. `1234567890.1234567890`)</ParamField>
