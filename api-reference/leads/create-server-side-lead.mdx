@@ -6,12 +6,16 @@ description: "Create a lead from your backend with API key authentication."
 
 This endpoint is designed for **server-side** integrations. It requires an API key sent via the `X-API-Key` header.
 
+<Tip>
+Connecting your own website forms? Follow [Connect a custom website form](/lead-sources/custom-forms). It includes a prompt you can give to your AI coding agent.
+</Tip>
+
 If a lead with the same `uniqueEventId` already exists, it will be updated instead of duplicated.
 
 ## Headers
 
 <ParamField header="Cookie" type="string">
-  Optional. The visitor's `Cookie` header, forwarded unchanged from the request your server received. LeadTrackr reads only the attribution and consent cookies from it. See [Send attribution data](/api-reference/attribution-data).
+  Optional. The visitor's `Cookie` header, forwarded unchanged from the request your server received. LeadTrackr reads only the attribution and consent cookies from it. See [Connect a custom website form](/lead-sources/custom-forms).
 </ParamField>
 
 ## Request body
@@ -35,7 +39,7 @@ If a lead with the same `uniqueEventId` already exists, it will be updated inste
 <ParamField body="attributionData" type="object">
   Attribution and tracking data. At least one of `userData` or `attributionData` must contain data.
 
-  The simplest way to fill it: send the visitor's cookies through the `Cookie` header or `attributionData.cookies`, plus `pageUrl`. LeadTrackr picks out the click IDs, analytics IDs and consent, and discards the rest. See [Send attribution data](/api-reference/attribution-data).
+  The simplest way to fill it: send the visitor's cookies through the `Cookie` header or `attributionData.cookies`, plus `pageUrl`. LeadTrackr picks out the click IDs, analytics IDs and consent, and discards the rest. See [Connect a custom website form](/lead-sources/custom-forms).
 
   <Expandable title="attributionData properties">
     <ParamField body="cookies" type="string | object" optional>The visitor's cookies, as a `Cookie` header string or an object of `{ "name": "value" }`. Only attribution and consent cookies are read; the rest is never stored.</ParamField>

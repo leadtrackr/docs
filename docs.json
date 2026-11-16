@@ -51,6 +51,7 @@
               "lead-sources/wordpress-forms",
               "lead-sources/gtm",
               "lead-sources/server-side-gtm",
+              "lead-sources/custom-forms",
               "lead-sources/leadbot",
               "lead-sources/channel-flow-tracker"
             ]
@@ -93,8 +94,7 @@
             "group": "Overview",
             "pages": [
               "api-reference/introduction",
-              "api-reference/authentication",
-              "api-reference/attribution-data"
+              "api-reference/authentication"
             ]
           },
           {

@@ -34,7 +34,7 @@ For **server-side** integrations where you control the backend, use [Create Serv
 <ParamField body="attributionData" type="object">
   Attribution and tracking data. At least one of `userData` or `attributionData` must contain data.
 
-  The simplest way to fill it: send the visitor's cookies through `attributionData.cookies`, plus `pageUrl`. LeadTrackr picks out the click IDs, analytics IDs and consent, and discards the rest. See [Send attribution data](/api-reference/attribution-data).
+  The simplest way to fill it: send the visitor's cookies through `attributionData.cookies`, plus `pageUrl`. LeadTrackr picks out the click IDs, analytics IDs and consent, and discards the rest. See [Connect a custom website form](/lead-sources/custom-forms).
 
   <Expandable title="attributionData properties">
     <ParamField body="cookies" type="string | object" optional>The visitor's cookies, as a `Cookie` header string or an object of `{ "name": "value" }`. Only attribution and consent cookies are read; the rest is never stored.</ParamField>

@@ -1,0 +1,240 @@
+---
+title: "Connect a custom website form"
+sidebarTitle: "Custom website forms"
+description: "Send leads from your own forms to LeadTrackr with one server-side API call. Written so you can hand it straight to your AI coding agent."
+icon: "code"
+---
+
+<Warning>
+**Preview.** Forwarding the `Cookie` header is not live in the API yet. This guide describes how it will work.
+</Warning>
+
+Built your own website with your own forms? Then you connect it to LeadTrackr with **one API call from your server**, right after a form is submitted. You forward the visitor's cookies as they are. LeadTrackr finds the click IDs and consent in them by itself.
+
+You don't have to write this code yourself. Copy the prompt below into your AI coding agent (Claude Code, Cursor, Copilot, …) and let it do the integration.
+
+## What you need
+
+- Your **project ID**: in the [dashboard](https://app.leadtrackr.io) under **Settings**.
+- Your **API key**: under **Settings → API Integration**. See [Authentication](/api-reference/authentication).
+
+Store the API key as a server environment variable, for example `LEADTRACKR_API_KEY`. Never put it in browser code.
+
+## Let your AI agent do it
+
+Copy this prompt into your agent, in the repository of your website:
+
+````text
+Integrate our website forms with LeadTrackr.
+
+Docs: https://leadtrackr.io/docs/lead-sources/custom-forms
+
+Rules:
+- Send every successful form submission to LeadTrackr from the SERVER,
+  in the code that handles the form after it has been validated and saved.
+  Never call LeadTrackr from browser JavaScript.
+- Endpoint: POST https://app.leadtrackr.io/api/leads/createServerSideLead
+- Headers:
+  - Content-Type: application/json
+  - X-API-Key: read from the environment variable LEADTRACKR_API_KEY
+  - Cookie: the visitor's Cookie header from the incoming form request,
+    forwarded unchanged. Do not parse, filter or rebuild the cookies.
+- Body (JSON):
+  {
+    "projectId": "<our project ID>",
+    "userData": { "firstName", "lastName", "email", "phone", "companyName" },
+    "formData": { "formName": "<readable form name>", "uniqueEventId": "<our own submission ID>" },
+    "attributionData": { "pageUrl": "<full URL of the page the form was on, including the query string>" },
+    "deviceData": { "ipAddress": "<visitor IP>", "userAgent": "<visitor user agent>" }
+  }
+  Only send the userData fields the form actually has. Phone numbers with
+  country code (+31612345678). Any other form fields can go in formData as-is.
+- pageUrl: use the Referer header of the form request. If our site sets a
+  strict Referrer-Policy, add a hidden field to the form filled with
+  location.href and use that instead.
+- Never block or break the form: call LeadTrackr after the submission is
+  saved, with a timeout of 3 seconds, and catch and log every error.
+  The visitor must always get the normal success response.
+- Do not send a request when the form submission itself failed or was spam.
+
+When done, list every form you connected with its formName, and tell me
+how to test it.
+````
+
+<Tip>
+Your agent can also read these docs directly. Use **Copy page** at the top of this page, or connect the LeadTrackr docs to your agent through the page menu (**MCP**).
+</Tip>
+
+## The call
+
+This is all the integration is. Every example forwards the `Cookie` header unchanged, sends the page URL and never lets an error reach the visitor.
+
+<CodeGroup>
+```php PHP
+function leadtrackr_send(array $form, string $submissionId): void
+{
+    $payload = [
+        "projectId" => "your-project-id",
+        "userData" => [
+            "firstName" => $form["first_name"] ?? null,
+            "email" => $form["email"] ?? null,
+            "phone" => $form["phone"] ?? null,
+        ],
+        "formData" => [
+            "formName" => "Contact Form",
+            "uniqueEventId" => $submissionId,
+        ],
+        "attributionData" => [
+            "pageUrl" => $_SERVER["HTTP_REFERER"] ?? null,
+        ],
+        "deviceData" => [
+            "ipAddress" => $_SERVER["REMOTE_ADDR"] ?? null,
+            "userAgent" => $_SERVER["HTTP_USER_AGENT"] ?? null,
+        ],
+    ];
+
+    $ch = curl_init("https://app.leadtrackr.io/api/leads/createServerSideLead");
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_TIMEOUT => 3,
+        CURLOPT_HTTPHEADER => [
+            "Content-Type: application/json",
+            "X-API-Key: " . getenv("LEADTRACKR_API_KEY"),
+            "Cookie: " . ($_SERVER["HTTP_COOKIE"] ?? ""),
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload),
+    ]);
+
+    if (curl_exec($ch) === false) {
+        error_log("LeadTrackr: " . curl_error($ch));
+    }
+    curl_close($ch);
+}
+```
+
+```javascript Node.js (Express)
+async function sendToLeadTrackr(req, submissionId) {
+  try {
+    const res = await fetch("https://app.leadtrackr.io/api/leads/createServerSideLead", {
+      method: "POST",
+      signal: AbortSignal.timeout(3000),
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": process.env.LEADTRACKR_API_KEY,
+        Cookie: req.headers.cookie ?? ""
+      },
+      body: JSON.stringify({
+        projectId: "your-project-id",
+        userData: { firstName: req.body.firstName, email: req.body.email, phone: req.body.phone },
+        formData: { formName: "Contact Form", uniqueEventId: submissionId },
+        attributionData: { pageUrl: req.get("referer") },
+        deviceData: { ipAddress: req.ip, userAgent: req.get("user-agent") }
+      })
+    });
+    if (!res.ok) console.error("LeadTrackr:", res.status, await res.text());
+  } catch (err) {
+    console.error("LeadTrackr:", err);
+  }
+}
+```
+
+```javascript Next.js (route handler)
+import { headers } from "next/headers";
+
+async function sendToLeadTrackr(form, submissionId) {
+  const h = await headers();
+  try {
+    await fetch("https://app.leadtrackr.io/api/leads/createServerSideLead", {
+      method: "POST",
+      signal: AbortSignal.timeout(3000),
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": process.env.LEADTRACKR_API_KEY,
+        Cookie: h.get("cookie") ?? ""
+      },
+      body: JSON.stringify({
+        projectId: "your-project-id",
+        userData: { email: form.get("email"), phone: form.get("phone") },
+        formData: { formName: "Contact Form", uniqueEventId: submissionId },
+        attributionData: { pageUrl: h.get("referer") },
+        deviceData: {
+          ipAddress: h.get("x-forwarded-for")?.split(",")[0],
+          userAgent: h.get("user-agent")
+        }
+      })
+    });
+  } catch (err) {
+    console.error("LeadTrackr:", err);
+  }
+}
+```
+
+```python Python (Django)
+import os
+import requests
+
+def send_to_leadtrackr(request, form, submission_id):
+    try:
+        requests.post(
+            "https://app.leadtrackr.io/api/leads/createServerSideLead",
+            timeout=3,
+            headers={
+                "X-API-Key": os.environ["LEADTRACKR_API_KEY"],
+                "Cookie": request.META.get("HTTP_COOKIE", ""),
+            },
+            json={
+                "projectId": "your-project-id",
+                "userData": {"email": form["email"], "phone": form.get("phone")},
+                "formData": {"formName": "Contact Form", "uniqueEventId": submission_id},
+                "attributionData": {"pageUrl": request.META.get("HTTP_REFERER")},
+                "deviceData": {
+                    "ipAddress": request.META.get("REMOTE_ADDR"),
+                    "userAgent": request.META.get("HTTP_USER_AGENT"),
+                },
+            },
+        )
+    except requests.RequestException as err:
+        print("LeadTrackr:", err)
+```
+</CodeGroup>
+
+Call it from your form handler **after** the submission is saved. A successful call returns `201` with the `leadId`. Every field is described in [Create Server-Side Lead](/api-reference/leads/create-server-side-lead).
+
+## Why the Cookie header
+
+Forwarding the `Cookie` header is the least error-prone way to connect a form:
+
+- **No parsing on your side.** Ad platforms change cookie names and formats. LeadTrackr keeps up with that; your code stays the same.
+- **Nothing is missed.** Server-side tracking cookies such as `FPGCLAW` and `FPID` are `HttpOnly`. Browser JavaScript can't read them, your server can.
+- **Consent comes along.** LeadTrackr reads the visitor's consent from the cookie of your consent banner.
+
+LeadTrackr only reads the cookies it needs for attribution and consent: ad click IDs, analytics IDs and consent banner cookies. All other cookies, such as login or session cookies, are discarded straight away and never stored or logged. From `pageUrl` only the host and path are stored, not the query string.
+
+## Test it
+
+1. Open your site with a test click ID: `https://www.example.com/contact/?gclid=test123`.
+2. Submit the form.
+3. Open the lead in the [dashboard](https://app.leadtrackr.io). It shows the form name, the contact details and the `gclid` `test123`.
+
+Submitting the same form twice with the same `uniqueEventId` updates the lead instead of creating a second one.
+
+## Common mistakes
+
+| Mistake | What happens | Fix |
+| --- | --- | --- |
+| Calling LeadTrackr from browser JavaScript | Your API key is public, and `HttpOnly` cookies are missing | Call it from your server |
+| Not forwarding the `Cookie` header | Leads arrive without click IDs, so conversions can't be sent to your ad platforms | Forward `Cookie` from the incoming form request, unchanged |
+| Rebuilding or filtering the cookies yourself | Click IDs in a format LeadTrackr doesn't expect are skipped | Forward the header as it is |
+| Waiting for LeadTrackr before answering the visitor | A slow or failed call breaks your form | Use a timeout and catch every error |
+| No `uniqueEventId` | A retried request creates a duplicate lead | Use your own submission ID |
+| Phone number without country code | Ad platforms can't match the lead | Send `+31612345678`, not `0612345678` |
+
+<CardGroup cols={2}>
+  <Card title="Create Server-Side Lead" icon="server" href="/api-reference/leads/create-server-side-lead">
+    Every field of the endpoint
+  </Card>
+  <Card title="Cookies" icon="cookie-bite" href="/reference/cookies">
+    The cookies LeadTrackr writes itself
+  </Card>
+</CardGroup>
