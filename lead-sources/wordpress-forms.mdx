@@ -16,31 +16,27 @@ If you're **not using WordPress** or your form provider isn't supported, you can
 
 Currently supported WordPress form plugins:
 
-- GravityForms
-- ContactForm 7
+- Gravity Forms
+- Contact Form 7
 - Elementor
 - WPForms
+- Fluent Forms
 - Divi forms
 
 <Info>Is your form plugin not supported yet? Let us know at support@leadtrackr.io, we'd love to hear from you and may add it to our roadmap!</Info>
 
 ## Step 1: Install the LeadTrackr Plugin
 
-1. In your WordPress dashboard, go to **Plugins**
-2. Click **Add New Plugin**
-3. Search for **LeadTrackr**
-4. Click **Install Now**
-5. Then click **Activate**
+1. In your WordPress dashboard, go to **Plugins** → **Add Plugin**
+2. Search for **LeadTrackr**
+3. Click **Install Now**
+4. Then click **Activate**
 
 <Frame>
-  <img src="/images/lead-sources/wordpress-1.png" alt="Install LeadTrackr plugin" />
+  <img src="/images/lead-sources/wordpress-1.png" alt="LeadTrackr plugin in the WordPress plugin directory" />
 </Frame>
 
 Once activated, you'll see **LeadTrackr** appear in your admin menu.
-
-<Frame>
-  <img src="/images/lead-sources/wordpress-2.png" alt="LeadTrackr in admin menu" />
-</Frame>
 
 ## Step 2: Connect Your Project
 
@@ -55,34 +51,36 @@ To connect your WordPress site to your LeadTrackr project, you need two values: 
   <img src="/images/lead-sources/wordpress-project-values.png" alt="Project ID and API key in the WordPress Integration dialog" />
 </Frame>
 
-In WordPress, go to **LeadTrackr** in the admin menu. Paste the values into the **Project ID** and **API Token** fields and click **Save**.
+In WordPress, go to **LeadTrackr** in the admin menu and open the **General** tab. Paste the values into the **Project ID** and **API Token** fields under **Connection** and click **Save changes**.
+
+Once both are saved, the status next to the logo shows **Connected** with your project ID.
+
+<Frame>
+  <img src="/images/lead-sources/wordpress-2.png" alt="LeadTrackr plugin General tab, connected with Project ID and saved API token" />
+</Frame>
 
 <Warning>
 **The API key is required for new installs.** The plugin stays disconnected until both the project ID and the API key are saved. Sites that installed the plugin before the API key was introduced keep working without one, but we recommend adding it.
 </Warning>
 
-## Step 3: Select Your Form Provider
+## Step 3: Choose Which Forms to Track
 
-LeadTrackr automatically detects which supported form plugins are installed on your WordPress site.
+The plugin has a tab for every supported form plugin. Tabs of form plugins that are not installed on your site are greyed out.
 
-In the plugin settings:
-
-- Select your form provider (e.g. **Contact Form 7**, **Elementor**, etc.)
-- Navigate to the provider tab in the plugin
-
-## Step 4: Enable Tracking for Your Forms
-
-For each form you want to track:
-
-1. Give the form a **recognizable name**
-2. Enable tracking by checking the box
-3. Click **Save**
-
-Your forms are now connected and all new submissions will be sent to LeadTrackr for qualification and conversion tracking.
+1. Open the tab of your form plugin (e.g. **Contact Form 7**)
+2. Choose how you want to track:
+    - Turn on **Track every form automatically** to send all forms, including forms you add later
+    - Or leave it off and turn on **Send** per form
+3. Optionally, give a form a **Custom name**. It replaces the form title in your LeadTrackr reports
+4. Click **Save changes**
 
 <Frame>
-  <img src="/images/lead-sources/wordpress-5.png" alt="Enable form tracking" />
+  <img src="/images/lead-sources/wordpress-5.png" alt="Contact Form 7 tab with a custom name and Send turned on for one form" />
 </Frame>
+
+<Note>The form tabs only work once the connection is complete. Until the project ID and API key are saved, they show **Finish the connection first**.</Note>
+
+Your forms are now connected and all new submissions will be sent to LeadTrackr for qualification and conversion tracking.
 
 ## Cookies the Plugin Writes
 
