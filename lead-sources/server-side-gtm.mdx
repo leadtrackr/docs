@@ -20,17 +20,17 @@ The plugin sends form submissions **server-to-server**, which means:
 
 1. Go to your **server container** in Tag Manager
 2. Click **Templates** → **Search Gallery**
-3. Look for **LeadTrackr Leads API**
-4. Click **Add to Workspace**
+3. Look for **LeadTrackr Tag** (by leadtrackr)
+4. Click **Add to workspace**
 
 <Frame>
-  <img src="/images/lead-sources/sgtm-1.png" alt="sGTM template gallery" />
+  <img src="/images/lead-sources/sgtm-1.png" alt="LeadTrackr Tag in the sGTM template gallery" />
 </Frame>
 
 ## Step 2: Create a New LeadTrackr Tag
 
 1. Go to **Tags** and click **New**
-2. Select **LeadTrackr Leads API** as the tag type
+2. Select **LeadTrackr Tag** as the tag type
 3. Set **Tag Type** to **Lead**
 4. Fill in the required fields:
     - **Project ID**
@@ -44,26 +44,26 @@ The plugin sends form submissions **server-to-server**, which means:
 Upgrading an existing tag? Fill in the API key before you publish. The tag no longer falls back to the endpoint without authentication.
 </Warning>
 
-### Where to find your API key
+### Where to find your project ID and API key
 
-1. Go to your [LeadTrackr Dashboard](https://app.leadtrackr.io)
-2. Open the project you want to connect
-3. Navigate to **Settings** and click **API Integration** in the sidebar
-4. Copy the **API Key**
+1. Go to [app.leadtrackr.io/dashboard/projects](https://app.leadtrackr.io/dashboard/projects)
+2. Open the project you want to connect and click **Edit Project**
+3. Go to **Lead Sources** and click **Google Tag Manager**
+4. Open the **Server-Side** tab
+5. Copy the **Project ID** and the **API key** (shown as **API Token**)
+
+<Frame>
+  <img src="/images/lead-sources/sgtm-project-values.png" alt="Project ID and API key in the Server-Side tab of the Google Tag Manager lead source" />
+</Frame>
+
+The project ID is a short code such as `kJsNQdFtsMv1`. You also see it in the URL of your project.
 
 <Tip>
 Store the API key in a constant variable in your server container (for example `LeadTrackr | API Key`) and select that variable in the tag. That way you only have to change it in one place.
 </Tip>
 
-### Where to Find Your Project ID
-
-1. Go to [app.leadtrackr.io/dashboard/projects](https://app.leadtrackr.io/dashboard/projects)
-2. Open the project you want to connect
-3. Your **Project ID** is visible in the URL
-    - Example: `https://app.leadtrackr.io/projects/16` → project ID = `16`
-
 <Frame>
-  <img src="/images/lead-sources/wordpress-3.png" alt="Project ID in URL" />
+  <img src="/images/lead-sources/sgtm-2.png" alt="LeadTrackr Tag configured with Tag Type, Project ID, API Key and a form_submission trigger" />
 </Frame>
 
 ## Step 3: Add a Trigger
@@ -71,10 +71,6 @@ Store the API key in a constant variable in your server container (for example `
 Attach a trigger that sends the lead event to LeadTrackr.
 
 This is typically a **custom event**, such as `form_submission`, or an incoming HTTP request handled by your sGTM client.
-
-<Frame>
-  <img src="/images/lead-sources/sgtm-2.png" alt="sGTM trigger setup" />
-</Frame>
 
 ## Step 4: Publish Your Container
 
