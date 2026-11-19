@@ -7,50 +7,50 @@ icon: "tag"
 
 ## Step 1: Add the LeadTrackr Tag to Your GTM Container
 
-1. Go to your **container** in Tag Manager
+1. Go to your **web container** in Tag Manager
 2. Click **Templates** → **Search Gallery**
-3. Look for **LeadTrackr tag**
-4. Click **Add to Workspace**
+3. Search for `leadtrackr` and open **LeadTracker Tag** (by leadtrackr)
+4. Click **Add to workspace**
 
 <Frame>
-  <img src="/images/lead-sources/gtm-1.png" alt="Search GTM gallery for LeadTrackr" />
+  <img src="/images/lead-sources/gtm-1.png" alt="LeadTracker Tag in the GTM community template gallery" />
 </Frame>
 
 ## Step 2: Create a New LeadTrackr Tag
 
 1. Go to **Tags** and click **New**
-2. Select **LeadTrackr Tag** as the tag type
-3. Choose **Lead** as the tag type
+2. Select **LeadTracker Tag** as the tag type
+3. Set **Tag Type** to **Lead**
 4. Fill in the required fields:
     - **Project ID**
     - **Form name** (descriptive label)
     - Any custom form fields or user data fields you want to pass along (e.g. email, phone, message)
 
+The client-side tag does not need an API key.
+
 <Info>If you use server-side tagging, we recommend sending requests both client and server side and adding a unique ID for deduplication.</Info>
 
-<Frame>
-  <img src="/images/lead-sources/gtm-2.png" alt="LeadTrackr tag configuration" />
-</Frame>
-
-### Where to Find Your Project ID
+### Where to find your project ID
 
 1. Go to [app.leadtrackr.io/dashboard/projects](https://app.leadtrackr.io/dashboard/projects)
-2. Open the project you want to connect
-3. Your **Project ID** is visible in the URL
-    - Example: `https://app.leadtrackr.io/projects/16` → project ID = `16`
+2. Open the project you want to connect and click **Edit Project**
+3. Go to **Lead Sources** and click **Google Tag Manager**
+4. Open the **Client-Side** tab and copy the **Project ID**
 
 <Frame>
-  <img src="/images/lead-sources/wordpress-3.png" alt="Project ID in URL" />
+  <img src="/images/lead-sources/gtm-project-id.png" alt="Project ID in the Client-Side tab of the Google Tag Manager lead source" />
 </Frame>
+
+The project ID is a short code such as `kJsNQdFtsMv1`. You also see it in the URL of your project.
 
 ## Step 3: Add a Trigger
 
-Attach a trigger that sends the lead event from the browser client to your server container.
+Attach a trigger that fires when a form is submitted successfully.
 
-This is typically a **custom event**, such as `form_submission`, or an incoming HTTP request handled by your sGTM client.
+This is typically a **custom event** from the dataLayer, such as `form_submission` or `form_success`.
 
 <Frame>
-  <img src="/images/lead-sources/gtm-3.png" alt="GTM trigger configuration" />
+  <img src="/images/lead-sources/gtm-2.png" alt="LeadTracker Tag configured with Tag Type Lead, Project ID, Form Name and a form_success trigger" />
 </Frame>
 
 ## Step 4: Publish Your Container
@@ -66,7 +66,7 @@ Your form submissions are now sent to LeadTrackr, ready to be rated, qualified, 
     Use the WordPress plugin for server-to-server tracking
   </Card>
   <Card title="Server-side GTM" icon="server" href="/lead-sources/server-side-gtm">
-    Use the Leads API tag in server-side GTM
+    Use the LeadTrackr Tag in server-side GTM
   </Card>
 </CardGroup>
 
