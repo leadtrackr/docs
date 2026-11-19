@@ -44,23 +44,22 @@ Once activated, you'll see **LeadTrackr** appear in your admin menu.
 
 ## Step 2: Connect Your Project
 
-To connect your WordPress site to your LeadTrackr account:
+To connect your WordPress site to your LeadTrackr project, you need two values: your **project ID** and your **API key**.
 
 1. Go to [app.leadtrackr.io/dashboard/projects](https://app.leadtrackr.io/dashboard/projects)
-2. Open the project you want to connect
-3. In the URL of the page, you'll find your **Project ID**
+2. Open the project you want to connect and click **Edit Project**
+3. Go to **Lead Sources** and click **WordPress**
+4. Copy the **Project ID** and the **API key** (shown as **API Token**)
 
 <Frame>
-  <img src="/images/lead-sources/wordpress-3.png" alt="Find project ID in URL" />
+  <img src="/images/lead-sources/wordpress-project-values.png" alt="Project ID and API key in the WordPress Integration dialog" />
 </Frame>
 
-**Example:** If the URL is `https://app.leadtrackr.io/projects/16`, your project ID is `16`.
+In WordPress, go to **LeadTrackr** in the admin menu. Paste the values into the **Project ID** and **API Token** fields and click **Save**.
 
-Enter this number in the **Project ID** field in the plugin settings and hit **Save**.
-
-<Frame>
-  <img src="/images/lead-sources/wordpress-4.png" alt="Enter project ID in plugin" />
-</Frame>
+<Warning>
+**The API key is required for new installs.** The plugin stays disconnected until both the project ID and the API key are saved. Sites that installed the plugin before the API key was introduced keep working without one, but we recommend adding it.
+</Warning>
 
 ## Step 3: Select Your Form Provider
 
