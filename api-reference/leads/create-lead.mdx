@@ -34,7 +34,12 @@ For **server-side** integrations where you control the backend, use [Create Serv
 <ParamField body="attributionData" type="object">
   Attribution and tracking data. At least one of `userData` or `attributionData` must contain data.
 
+  The simplest way to fill it: send the visitor's cookies through `attributionData.cookies`, plus `pageUrl`. LeadTrackr picks out the click IDs, analytics IDs and consent, and discards the rest. See [Connect a custom website form](/lead-sources/custom-forms).
+
   <Expandable title="attributionData properties">
+    <ParamField body="cookies" type="string | object" optional>The visitor's cookies, as a `Cookie` header string or an object of `{ "name": "value" }`. Only attribution and consent cookies are read; the rest is never stored.</ParamField>
+    <ParamField body="pageUrl" type="string" optional>Full URL of the page the lead came from, including the query string. Only host and path are stored.</ParamField>
+    <ParamField body="consent" type="object" optional>Consent status in Google Consent Mode terms, e.g. `{ "ad_storage": "granted" }`. Read from your consent banner's cookie when you leave it out.</ParamField>
     <ParamField body="gclid" type="string" optional>Google Click ID</ParamField>
     <ParamField body="wbraid" type="string" optional>Google Web-to-App Broad ID</ParamField>
     <ParamField body="cid" type="string" optional>Google Analytics Client ID (e.g. `1234567890.1234567890`)</ParamField>
@@ -71,6 +76,10 @@ For **server-side** integrations where you control the backend, use [Create Serv
 
 <ParamField body="uniqueIdentifier" type="string">
   A user-provided identifier to link this lead to your own system (e.g. your CRM lead ID or form submission ID). Max 255 characters. Also accepted as `unique_identifier`.
+</ParamField>
+
+<ParamField body="value" type="number">
+  The value of the lead in normal currency notation, e.g. `1250.50`, not in cents. Use a dot as the decimal separator, at most two decimals. Used as the conversion value sent to your ad platforms, unless a later [status update](/api-reference/leads/update-lead-status) brings its own value. An invalid value is ignored; the lead is still created.
 </ParamField>
 
 ## Response
@@ -114,7 +123,8 @@ curl -X POST https://app.leadtrackr.io/api/leads/createLead \
       "ipAddress": "203.0.113.42",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     },
-    "uniqueIdentifier": "crm-lead-456"
+    "uniqueIdentifier": "crm-lead-456",
+    "value": 1250.50
   }'
 ```
 
@@ -139,7 +149,8 @@ const response = await fetch("https://app.leadtrackr.io/api/leads/createLead", {
       formName: "Contact Form",
       uniqueEventId: "evt_abc123"
     },
-    uniqueIdentifier: "crm-lead-456"
+    uniqueIdentifier: "crm-lead-456",
+    value: 1250.50
   })
 });
 
@@ -171,7 +182,8 @@ curl_setopt_array($ch, [
             "formName" => "Contact Form",
             "uniqueEventId" => "evt_abc123"
         ],
-        "uniqueIdentifier" => "crm-lead-456"
+        "uniqueIdentifier" => "crm-lead-456",
+        "value" => 1250.50
     ])
 ]);
 

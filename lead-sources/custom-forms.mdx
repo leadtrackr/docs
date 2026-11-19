@@ -1,0 +1,270 @@
+---
+title: "Connect a custom website form"
+sidebarTitle: "Custom website forms"
+description: "Send leads from your own forms to LeadTrackr with one server-side API call. Written so you can hand it straight to your AI coding agent."
+icon: "code"
+---
+
+Built your own website with your own forms, or had an AI build it? Then you connect it to LeadTrackr with **one API call from your server**, right after a form is submitted. You forward the visitor's cookies as they are. LeadTrackr finds the click IDs and consent in them by itself.
+
+You don't have to write this code yourself. Give your AI coding agent (Claude Code, Cursor, Copilot, …) the prompt below and let it do the integration.
+
+## What you need
+
+- Your **project ID**: in the [dashboard](https://app.leadtrackr.io) under **Settings**.
+- Your **API key**: under **Settings → API Integration**. See [Authentication](/api-reference/authentication).
+
+Store the API key as a server environment variable, for example `LEADTRACKR_API_KEY`. Never put it in browser code.
+
+## Let your AI agent do it
+
+Copy this prompt into your agent, in the repository of your website:
+
+```text
+Read https://leadtrackr.io/docs/lead-sources/custom-forms and help me
+connect our website forms to LeadTrackr. Ask me the questions under
+"Before you start" first, then implement it and tell me how to test it.
+```
+
+<Tip>
+Your agent can also read these docs directly. Use **Copy page** at the top of this page, or connect the LeadTrackr docs to your agent through the page menu (**MCP**).
+</Tip>
+
+## Before you start
+
+Answer these two questions first. They decide how the integration is built.
+
+### Is LeadTrackr the only place your leads are stored?
+
+- **No**, the form also saves to your database, CRM or mailbox: send the lead to LeadTrackr **after** that save, with a 3-second timeout, and catch every error. The visitor always gets the normal success message, even if LeadTrackr is slow or down.
+- **Yes**, LeadTrackr is the only place: **wait for the response**. Only show the success message after a `201`. On an error or timeout, show an error so the visitor can try again. Otherwise a failed call means a lost lead that nobody ever sees.
+
+### Can your phone field deliver E.164?
+
+Send phone numbers in [E.164](https://en.wikipedia.org/wiki/E.164) format: `+31612345678`, not `0612345678`. Ad platforms match leads on the phone number, so this directly affects your match quality.
+
+The most reliable way is a **country code selector** next to the phone field, instead of one free text field. Then you always know the country code and only have to strip spaces, dashes and the leading `0`.
+
+## What to send
+
+Call `POST https://app.leadtrackr.io/api/leads/createServerSideLead` from your **server**, in the code that handles the form after it has been validated:
+
+| | What |
+| --- | --- |
+| `X-API-Key` header | Your API key, from the environment |
+| `Cookie` header | The visitor's `Cookie` header from the incoming form request, **forwarded unchanged**. Don't parse, filter or rebuild it. |
+| `projectId` | Your project ID |
+| `userData` | `firstName`, `lastName`, `email`, `phone` (E.164), `companyName`. Only the fields the form has. |
+| `formData` | `formName` (readable) and `uniqueEventId` (your own submission ID). Other form fields may be added as they are. |
+| `attributionData.pageUrl` | Full URL of the page the form was on, **including the query string**. Use the `Referer` header of the form request, or a hidden field filled with `location.href` if your site sets a strict `Referrer-Policy`. |
+| `deviceData` | `ipAddress` and `userAgent` of the visitor |
+| `value` | Optional. A known value of the lead (order total, quote amount) in normal notation with a dot: `1250.50`, not cents. |
+
+Don't send anything when the submission itself failed or was spam.
+
+## The call
+
+Every example forwards the `Cookie` header unchanged, sends the page URL and uses a 3-second timeout. They follow the **No** answer above: errors are logged, the form never breaks. If LeadTrackr is your only lead storage, return the result instead and only confirm the submission on a `201`.
+
+<CodeGroup>
+```php PHP
+function leadtrackr_send(array $form, string $submissionId): void
+{
+    $payload = [
+        "projectId" => "your-project-id",
+        "userData" => [
+            "firstName" => $form["first_name"] ?? null,
+            "email" => $form["email"] ?? null,
+            "phone" => $form["phone"] ?? null,
+        ],
+        "formData" => [
+            "formName" => "Contact Form",
+            "uniqueEventId" => $submissionId,
+        ],
+        "attributionData" => [
+            "pageUrl" => $_SERVER["HTTP_REFERER"] ?? null,
+        ],
+        "deviceData" => [
+            "ipAddress" => $_SERVER["REMOTE_ADDR"] ?? null,
+            "userAgent" => $_SERVER["HTTP_USER_AGENT"] ?? null,
+        ],
+    ];
+
+    $ch = curl_init("https://app.leadtrackr.io/api/leads/createServerSideLead");
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_TIMEOUT => 3,
+        CURLOPT_HTTPHEADER => [
+            "Content-Type: application/json",
+            "X-API-Key: " . getenv("LEADTRACKR_API_KEY"),
+            "Cookie: " . ($_SERVER["HTTP_COOKIE"] ?? ""),
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload),
+    ]);
+
+    if (curl_exec($ch) === false) {
+        error_log("LeadTrackr: " . curl_error($ch));
+    }
+    curl_close($ch);
+}
+```
+
+```javascript Node.js (Express)
+async function sendToLeadTrackr(req, submissionId) {
+  try {
+    const res = await fetch("https://app.leadtrackr.io/api/leads/createServerSideLead", {
+      method: "POST",
+      signal: AbortSignal.timeout(3000),
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": process.env.LEADTRACKR_API_KEY,
+        Cookie: req.headers.cookie ?? ""
+      },
+      body: JSON.stringify({
+        projectId: "your-project-id",
+        userData: { firstName: req.body.firstName, email: req.body.email, phone: req.body.phone },
+        formData: { formName: "Contact Form", uniqueEventId: submissionId },
+        attributionData: { pageUrl: req.get("referer") },
+        deviceData: { ipAddress: req.ip, userAgent: req.get("user-agent") }
+      })
+    });
+    if (!res.ok) console.error("LeadTrackr:", res.status, await res.text());
+  } catch (err) {
+    console.error("LeadTrackr:", err);
+  }
+}
+```
+
+```javascript Next.js (route handler)
+import { headers } from "next/headers";
+
+async function sendToLeadTrackr(form, submissionId) {
+  const h = await headers();
+  try {
+    await fetch("https://app.leadtrackr.io/api/leads/createServerSideLead", {
+      method: "POST",
+      signal: AbortSignal.timeout(3000),
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": process.env.LEADTRACKR_API_KEY,
+        Cookie: h.get("cookie") ?? ""
+      },
+      body: JSON.stringify({
+        projectId: "your-project-id",
+        userData: { email: form.get("email"), phone: form.get("phone") },
+        formData: { formName: "Contact Form", uniqueEventId: submissionId },
+        attributionData: { pageUrl: h.get("referer") },
+        deviceData: {
+          ipAddress: h.get("x-forwarded-for")?.split(",")[0],
+          userAgent: h.get("user-agent")
+        }
+      })
+    });
+  } catch (err) {
+    console.error("LeadTrackr:", err);
+  }
+}
+```
+
+```python Python (Django)
+import os
+import requests
+
+def send_to_leadtrackr(request, form, submission_id):
+    try:
+        requests.post(
+            "https://app.leadtrackr.io/api/leads/createServerSideLead",
+            timeout=3,
+            headers={
+                "X-API-Key": os.environ["LEADTRACKR_API_KEY"],
+                "Cookie": request.META.get("HTTP_COOKIE", ""),
+            },
+            json={
+                "projectId": "your-project-id",
+                "userData": {"email": form["email"], "phone": form.get("phone")},
+                "formData": {"formName": "Contact Form", "uniqueEventId": submission_id},
+                "attributionData": {"pageUrl": request.META.get("HTTP_REFERER")},
+                "deviceData": {
+                    "ipAddress": request.META.get("REMOTE_ADDR"),
+                    "userAgent": request.META.get("HTTP_USER_AGENT"),
+                },
+            },
+        )
+    except requests.RequestException as err:
+        print("LeadTrackr:", err)
+```
+</CodeGroup>
+
+Call it from your form handler **after** the submission is saved. A successful call returns `201` with the `leadId`. Every field is described in [Create Server-Side Lead](/api-reference/leads/create-server-side-lead).
+
+## Why the Cookie header
+
+Forwarding the `Cookie` header is the least error-prone way to connect a form:
+
+- **No parsing on your side.** Ad platforms change cookie names and formats. LeadTrackr keeps up with that; your code stays the same.
+- **Nothing is missed.** Server-side tracking cookies such as `FPGCLAW` and `FPID` are `HttpOnly`. Browser JavaScript can't read them, your server can.
+- **Consent comes along.** LeadTrackr reads the visitor's consent from the cookie of your consent banner.
+
+LeadTrackr only reads the cookies it needs for attribution and consent: ad click IDs, analytics IDs and consent banner cookies. All other cookies, such as login or session cookies, are discarded straight away and never stored or logged. From `pageUrl` only the host and path are stored, not the query string.
+
+## Test it
+
+1. Open your site with a test click ID: `https://www.example.com/contact/?gclid=test123`.
+2. Submit the form.
+3. Open the lead in the [dashboard](https://app.leadtrackr.io). It shows the form name, the contact details and the `gclid` `test123`.
+
+Submitting the same form twice with the same `uniqueEventId` updates the lead instead of creating a second one.
+
+## Pro tip: a dataLayer event for your tracking
+
+Not needed for LeadTrackr, but worth giving your agent in the same go. Have the site push a `form_submission` event to the `dataLayer` after every successful submission. Then Google Tag Manager can use it for GA4, Google Ads and Meta without anyone writing a form listener later.
+
+```json
+{
+  "event": "form_submission",
+  "form_id": "1",
+  "form_name": "Contact form",
+  "entry_id": "123",
+  "user_data": {
+    "email": "user@example.com",
+    "phone_number": "+31612345678",
+    "first_name": "John",
+    "last_name": "Doe"
+  },
+  "fields": {
+    "Email Address": "user@example.com",
+    "Phone Number": "+31612345678",
+    "Full Name": "John Doe",
+    "Message": "Hello world"
+  }
+}
+```
+
+- **Only after a successful submission**, never on the button click. A submit with validation errors pushes nothing.
+- **Generic**: one implementation for every form, with `form_id`, `form_name` and `entry_id` filled dynamically.
+- **Both confirmation types**: push in the success callback for inline confirmations; for a redirect to a thank-you page the payload has to survive the page load.
+- **Exactly once per submission**, also when the thank-you page is refreshed.
+
+The full specification, with field mapping, normalisation and test criteria, is in the [YesWeTrack developer briefing](https://yeswetrack.notion.site/Briefing-formdataLayer-3add9bd80a3e8091a8aad42f5678bfbb). Ask your agent to read it and to check with you before building it.
+
+## Common mistakes
+
+| Mistake | What happens | Fix |
+| --- | --- | --- |
+| Calling LeadTrackr from browser JavaScript | Your API key is public, and `HttpOnly` cookies are missing | Call it from your server |
+| Not forwarding the `Cookie` header | Leads arrive without click IDs, so conversions can't be sent to your ad platforms | Forward `Cookie` from the incoming form request, unchanged |
+| Rebuilding or filtering the cookies yourself | Click IDs in a format LeadTrackr doesn't expect are skipped | Forward the header as it is |
+| Waiting for LeadTrackr while you also store the lead elsewhere | A slow or failed call breaks your form for nothing | Use a timeout and catch every error |
+| Not waiting for LeadTrackr when it's your only lead storage | A failed call loses the lead without anyone noticing | Wait for the `201` before confirming |
+| No `uniqueEventId` | A retried request creates a duplicate lead | Use your own submission ID |
+| Phone number without country code | Ad platforms can't match the lead | Send `+31612345678`, not `0612345678` |
+
+<CardGroup cols={2}>
+  <Card title="Create Server-Side Lead" icon="server" href="/api-reference/leads/create-server-side-lead">
+    Every field of the endpoint
+  </Card>
+  <Card title="Cookies" icon="cookie-bite" href="/reference/cookies">
+    The cookies LeadTrackr writes itself
+  </Card>
+</CardGroup>
